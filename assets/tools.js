@@ -23,6 +23,75 @@
  */
 window.TOOLS = [
   {
+    id: "techvkey",
+    name: "TechVKey",
+    tagline: "Bộ gõ tiếng Việt cho Windows — nhẹ, có giao diện sáng/tối, tự cập nhật.",
+    description:
+      "TechVKey là bộ gõ tiếng Việt cho Windows, phát triển tiếp từ mã nguồn mở OpenKey của Mai Vu Tuyen (giấy phép GPL) nên giữ nguyên bộ máy gõ ổn định của OpenKey. Phần mình làm thêm: sửa lỗi kẹt phím Shift/Ctrl khiến chữ bị tự viết hoa, làm lại giao diện (ô nhập bo góc, hộp thoại thông báo đồng bộ, giao diện tối theo Windows) và tự cập nhật qua GitHub Releases. Mã nguồn công khai theo GPL.",
+    category: "Tiện ích Windows",
+    platform: "Windows",
+    status: "stable",
+    version: "2.0.10",
+    updated: "2026-11-19",
+    stack: ["C++", "Win32", "GDI+"],
+    features: [
+      "Kiểu gõ Telex, VNI, Simple Telex; bảng mã Unicode, TCVN3, VNI Windows, Unicode tổ hợp, CP 1258",
+      "Kiểm tra chính tả, tự khôi phục phím với từ sai, viết hoa chữ cái đầu câu",
+      "Gõ tắt (macro) và công cụ chuyển mã nhanh",
+      "Loại trừ ứng dụng thông minh, tự nhớ bảng mã theo từng ứng dụng",
+      "Phím chuyển Việt / Anh tự cấu hình (Ctrl, Alt, Win, Shift + một phím)",
+      "Giao diện sáng / tối, có thể theo Windows; biểu tượng khay hợp cả taskbar sáng và tối",
+      "Tự cập nhật qua GitHub Releases và tự mở lại sau khi cập nhật"
+    ],
+    requirements: [
+      "Windows 10 / 11 (64-bit)",
+      "Không cần cài đặt: giải nén file zip rồi chạy OpenKey64.exe",
+      "Chưa ký số: lần đầu Windows SmartScreen có thể cảnh báo — chọn Thông tin thêm → Vẫn chạy. Nếu file bị chặn, bấm chuột phải → Properties → Unblock",
+      "Đang dùng 2.0.8 trở xuống và cập nhật bằng nút trong app: chép OpenKeyUpdate.exe trong file zip mới vào thư mục cài một lần để các lần cập nhật sau tự mở lại"
+    ],
+    download: "https://github.com/dangvien-dev/TechVKey/releases/latest", // dự phòng khi GitHub API bị giới hạn (403): nút vẫn dẫn tới trang tải
+    githubRepo: "dangvien-dev/TechVKey",
+    source: "https://github.com/dangvien-dev/TechVKey",
+    docs: "",
+    changelog: [
+      {
+        version: "2.0.10", date: "2026-11-19",
+        notes: [
+          "Ô phím tắt (chữ Z) thấp lại, thẳng hàng với các checkbox và không còn sát ô Bảng mã",
+          "Lần đầu thử tính năng tự mở lại TechVKey sau khi cập nhật"
+        ]
+      },
+      {
+        version: "2.0.9", date: "2026-11-18",
+        notes: [
+          "Giao diện tối: hết khối trắng sau các ô chọn trong tab, viền ô nhập và góc bo gọn hơn",
+          "Updater tự mở lại TechVKey và tự cập nhật chính nó",
+          "Biểu tượng khay kiểu hiện đại tự đổi chữ đậm trên taskbar sáng"
+        ]
+      },
+      {
+        version: "2.0.8", date: "2026-11-18",
+        notes: [
+          "Ô nhập bo góc, hộp thoại thông báo đồng bộ giao diện",
+          "Thêm giao diện tối (Hệ thống → Giao diện: Theo Windows / Sáng / Tối)",
+          "Sửa chữ tiếng Việt bị hỏng dấu trong hộp thoại báo lỗi cập nhật"
+        ]
+      },
+      {
+        version: "2.0.7", date: "2026-11-18",
+        notes: ["Báo lỗi mở OpenKeyUpdate.exe rõ ràng hơn và bớt bị Windows chặn"]
+      },
+      {
+        version: "2.0.6", date: "2026-11-18",
+        notes: [
+          "Sửa lỗi kẹt phím Shift/Ctrl khiến chữ bị tự viết hoa",
+          "Giao diện mới êm mắt, tinh gọn",
+          "Đổi tên thành TechVKey, tự cập nhật từ kho riêng"
+        ]
+      }
+    ]
+  },
+  {
     id: "techmaster-pro",
     name: "TechMaster Pro",
     tagline: "Toolkit IT portable chạy từ USB — xem phần cứng, backup/restore, cấu hình máy.",
