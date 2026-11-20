@@ -1,5 +1,5 @@
 /*
- * KHO LỖI — lỗi máy tính / máy in / photocopy / scan đã có phương án xử lý.
+ * SỔ TAY SỬA LỖI — các ca lỗi máy tính / máy in / photocopy / scan, cách xử lý và kết quả.
  * Chỉ cần sửa file này để thêm / cập nhật lỗi. Trang tự sinh bộ lọc theo `device`.
  *
  *  id       : slug không dấu, duy nhất  (#/loi/<id>)

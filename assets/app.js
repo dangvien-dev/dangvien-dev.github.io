@@ -86,7 +86,7 @@
   const DEVICES = uniq(FIXES.map((f) => f.device));
   const devOf = (d) => GROUP_COLORS[Math.max(0, DEVICES.indexOf(d)) % GROUP_COLORS.length];
   const dvars = (d) => { const g = devOf(d); return `--g-fg:${g.fg};--g-bg:${g.bg}`; };
-  // `code` và **đậm** trong nội dung kho lỗi (escape trước rồi mới format)
+  // `code` và **đậm** trong nội dung sổ tay sửa lỗi (escape trước rồi mới format)
   const fmt = (s) => esc(s)
     .replace(/`([^`]+)`/g, "<code>$1</code>")
     .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
@@ -183,7 +183,7 @@
       <section class="section alt">
         <div class="wrap">
           <div class="section-head">
-            <div><h2>Kho lỗi</h2><p>Lỗi máy tính, máy in, photocopy, máy scan đã có cách xử lý — tra theo mã lỗi hoặc tên máy.</p></div>
+            <div><h2>Sổ tay sửa lỗi</h2><p>Các ca lỗi máy tính, máy in, photocopy, máy scan mình đã gặp và cách xử lý — tra theo mã lỗi hoặc tên máy.</p></div>
             <a class="btn outline" href="#/loi">Xem ${FIXES.length} lỗi →</a>
           </div>
           <div class="grid">${latest.map(fixCard).join("")}</div>
@@ -209,7 +209,7 @@
           <div class="stats">
             <div><b>${TOOLS.length}</b><span>ứng dụng</span></div>
             <div><b>${platforms.length}</b><span>nền tảng</span></div>
-            ${FIXES.length ? `<div><b>${FIXES.length}</b><span>lỗi đã có cách xử lý</span></div>` : ""}
+            ${FIXES.length ? `<div><b>${FIXES.length}</b><span>ca trong sổ tay sửa lỗi</span></div>` : ""}
           </div>
         </div>
       </section>
@@ -339,7 +339,7 @@
     }
   }
 
-  // ---------- kho lỗi ----------
+  // ---------- sổ tay sửa lỗi ----------
   function fixMatches(f) {
     if (state.fixDevice !== "Tất cả" && f.device !== state.fixDevice) return false;
     if (state.fixVerified !== "Tất cả" && f.verified !== state.fixVerified) return false;
@@ -349,7 +349,8 @@
     return norm(state.fixQ).split(/\s+/).every((w) => hay.includes(w));
   }
 
-  const vbadge = (v) => `<span class="badge ${v === "field" ? "stable" : "beta"}">${esc(VERIFIED[v] || v || "—")}</span>`;
+  const VBADGE = { field: "stable", improved: "dev", unresolved: "internal", doc: "beta" };
+  const vbadge = (v) => `<span class="badge ${VBADGE[v] || "beta"}">${esc(VERIFIED[v] || v || "—")}</span>`;
 
   function fixCard(f) {
     return `
@@ -370,9 +371,9 @@
     const list = FIXES.filter(fixMatches);
     document.getElementById("grid").innerHTML = list.length
       ? list.map(fixCard).join("")
-      : `<div class="empty" style="grid-column:1/-1">Không có lỗi nào khớp. Thử gõ mã lỗi (vd 0x709, C447) hoặc tên máy.</div>`;
+      : `<div class="empty" style="grid-column:1/-1">Không có ca nào khớp. Thử gõ mã lỗi (vd 0x709, C447) hoặc tên máy.</div>`;
     const c = document.getElementById("fix-count");
-    if (c) c.textContent = `${list.length} / ${FIXES.length} lỗi`;
+    if (c) c.textContent = `${list.length} / ${FIXES.length} ca`;
   }
 
   function renderFixList() {
@@ -381,9 +382,9 @@
     app.innerHTML = `
       <section class="hero-band small">
         <div class="wrap hero-in">
-          ${crumb([["#/", "Trang chủ"], [null, "Kho lỗi"]])}
-          <h1>Kho lỗi</h1>
-          <p>Các lỗi máy tính, máy in, photocopy, máy scan đã có phương án xử lý.
+          ${crumb([["#/", "Trang chủ"], [null, "Sổ tay sửa lỗi"]])}
+          <h1>Sổ tay sửa lỗi</h1>
+          <p>Các ca lỗi máy tính, máy in, photocopy, máy scan mình đã gặp, ghi lại cách xử lý và kết quả.
             <b>Đã xử lý thực tế</b>: đã sửa thành công trên máy khách. <b>Đã cải thiện</b>: có tiến triển nhưng chưa xác nhận dứt điểm. <b>Chưa xác nhận</b>: ca chưa có kết quả cuối. <b>Quy trình chuẩn</b>: theo tài liệu hãng / kinh nghiệm.</p>
           <label class="search big">${ICON.search}
             <input id="fq" type="search" placeholder="Gõ mã lỗi, tên máy, hiện tượng… (vd 0x709, C447)" value="${esc(state.fixQ)}" autocomplete="off"></label>
@@ -420,8 +421,8 @@
     const f = FIXES.find((x) => x.id === id);
     setNav("fixes");
     if (!f) {
-      app.innerHTML = `<div class="wrap page">${crumb([["#/loi", "Kho lỗi"], [null, "Không tìm thấy"]])}
-        <div class="empty">Không tìm thấy lỗi “${esc(id)}”. <a href="#/loi">Về kho lỗi</a></div></div>`;
+      app.innerHTML = `<div class="wrap page">${crumb([["#/loi", "Sổ tay sửa lỗi"], [null, "Không tìm thấy"]])}
+        <div class="empty">Không tìm thấy lỗi “${esc(id)}”. <a href="#/loi">Về sổ tay sửa lỗi</a></div></div>`;
       return;
     }
     document.title = `${f.title} · ${SITE.title || "Dang Vien Dev"}`;
@@ -433,7 +434,7 @@
       </div></li>`).join("");
     app.innerHTML = `
       <div class="wrap page" style="${dvars(f.device)}">
-        ${crumb([["#/loi", "Kho lỗi"], [null, f.device]])}
+        ${crumb([["#/loi", "Sổ tay sửa lỗi"], [null, f.device]])}
         <div class="card hero fix-hero">
           <div class="hero-text">
             <div class="tool-cat">${esc(f.device)}</div>
@@ -477,7 +478,7 @@
     let m;
     if ((m = h.match(/^#\/tool\/(.+)$/))) showDetail(decodeURIComponent(m[1]));
     else if ((m = h.match(/^#\/loi\/(.+)$/))) renderFixDetail(decodeURIComponent(m[1]));
-    else if (h === "#/loi") { document.title = `Kho lỗi · ${SITE.title || "Dang Vien Dev"}`; renderFixList(); }
+    else if (h === "#/loi") { document.title = `Sổ tay sửa lỗi · ${SITE.title || "Dang Vien Dev"}`; renderFixList(); }
     else { document.title = SITE.title || "Dang Vien Dev"; renderList(); }
   }
 
