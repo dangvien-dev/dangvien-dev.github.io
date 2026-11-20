@@ -198,6 +198,50 @@ svg { flex: none; }
 .log-item ul { margin: 6px 0 0; padding-left: 18px; }
 .note { color: var(--text-2); font-size: 13px; }
 
+
+/* ---------- Kho lỗi (#/loi) ---------- */
+.muted { color: var(--text-2); }
+.intro strong { color: var(--text); font-weight: 600; }
+.fix .tool-cat { margin-bottom: 2px; }
+.fix .tool-name { font-size: 15px; }
+.fix-model { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tag.code { color: var(--g-fg, var(--accent)); background: var(--g-bg, #EFF6FF); font-weight: 600; }
+
+.sec code, .notes code {
+  font: 12.5px var(--mono); background: var(--bg-main); border: 1px solid var(--border);
+  padding: 0 5px; border-radius: 5px; overflow-wrap: anywhere;
+}
+.steps { list-style: none; margin: 0; padding: 0; }
+.step { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.step:first-child { padding-top: 2px; }
+.step:last-child { border-bottom: 0; padding-bottom: 0; }
+.step-no {
+  flex: none; width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center;
+  background: var(--g-bg, #EFF6FF); color: var(--g-fg, var(--accent)); font-weight: 700; font-size: 13px;
+}
+.step-body { flex: 1; min-width: 0; }
+.step-t { font-weight: 600; margin-top: 2px; }
+.step-d { color: var(--text); margin-top: 2px; }
+.cmd { position: relative; margin-top: 8px; background: var(--sidebar); border-radius: 10px; }
+.cmd pre {
+  margin: 0; padding: 12px 14px; padding-right: 86px; color: #E2E8F0;
+  font: 12.5px/1.6 var(--mono); white-space: pre-wrap; word-break: break-all;
+}
+.cmd .copy {
+  position: absolute; top: 7px; right: 7px; display: inline-flex; align-items: center; gap: 5px;
+  border: 0; border-radius: 6px; padding: 4px 8px; cursor: pointer;
+  background: var(--side-hover); color: var(--side-text); font: 12px var(--font);
+}
+.cmd .copy:hover { background: #334155; color: #fff; }
+.warn { background: #FFFBEB; }
+.warn h3::before { background: #D97706; }
+.notes { margin: 0; padding-left: 18px; }
+.notes li + li { margin-top: 6px; }
+.refs { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
+.refs-h { color: var(--text-2); font-size: 12px; }
+.refs a { color: var(--accent); text-decoration: none; }
+.refs a:hover { text-decoration: underline; }
+
 /* ---------- Responsive ---------- */
 @media (max-width: 1000px) {
   .detail { grid-template-columns: 1fr; }
