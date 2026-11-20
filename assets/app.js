@@ -62,7 +62,7 @@
   };
 
   const state = { q: "", platform: "Tất cả", category: "Tất cả", fixQ: "", fixDevice: "Tất cả", fixVerified: "Tất cả" };
-  const VERIFIED = { field: "Đã xử lý thực tế", doc: "Quy trình chuẩn" };
+  const VERIFIED = { field: "Đã xử lý thực tế", improved: "Đã cải thiện, chưa xác nhận dứt điểm", unresolved: "Chưa xác nhận kết quả", doc: "Quy trình chuẩn" };
   const releaseCache = {};
 
   // ---------- helpers ----------
@@ -377,14 +377,14 @@
 
   function renderFixList() {
     setNav("fixes");
-    const opts = [["Tất cả", "Tất cả"], ["field", VERIFIED.field], ["doc", VERIFIED.doc]];
+    const opts = [["Tất cả", "Tất cả"], ["field", VERIFIED.field], ["improved", VERIFIED.improved], ["unresolved", VERIFIED.unresolved], ["doc", VERIFIED.doc]];
     app.innerHTML = `
       <section class="hero-band small">
         <div class="wrap hero-in">
           ${crumb([["#/", "Trang chủ"], [null, "Kho lỗi"]])}
           <h1>Kho lỗi</h1>
           <p>Các lỗi máy tính, máy in, photocopy, máy scan đã có phương án xử lý.
-            <b>Đã xử lý thực tế</b>: đã sửa thành công trên máy khách. <b>Quy trình chuẩn</b>: theo tài liệu hãng / kinh nghiệm, áp dụng cho đúng dòng máy ghi trong mục.</p>
+            <b>Đã xử lý thực tế</b>: đã sửa thành công trên máy khách. <b>Đã cải thiện</b>: có tiến triển nhưng chưa xác nhận dứt điểm. <b>Chưa xác nhận</b>: ca chưa có kết quả cuối. <b>Quy trình chuẩn</b>: theo tài liệu hãng / kinh nghiệm.</p>
           <label class="search big">${ICON.search}
             <input id="fq" type="search" placeholder="Gõ mã lỗi, tên máy, hiện tượng… (vd 0x709, C447)" value="${esc(state.fixQ)}" autocomplete="off"></label>
         </div>
