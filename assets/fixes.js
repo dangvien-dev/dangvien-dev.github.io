@@ -401,4 +401,52 @@ window.FIXES = [
     notes: [],
     refs: []
   }
+
+  /* ================================ CANON ================================ */
+  {
+    id: "canon-lbp243dw-heavy-paper",
+    title: "Canon LBP243dw: mực in bám giấy kém, cải thiện khi chọn giấy dày",
+    codes: ["Mực không bám", "90–105 g/m²"],
+    device: "Máy in",
+    model: "Canon LBP243dw",
+    verified: "field",
+    updated: "2026-11-20",
+    symptom: "Bản in có hiện tượng mực / toner bám giấy không tốt. Ca thực tế cải thiện sau khi đổi thiết lập loại giấy sang mức 90–105 g/m².",
+    cause: "Thiết lập loại giấy trong driver hoặc trên máy có thể chưa khớp với định lượng giấy thực tế. Máy điều chỉnh chế độ cụm sấy theo loại giấy; chọn đúng nhóm giấy dày có thể giúp toner bám tốt hơn. Đây là nguyên nhân phù hợp với kết quả ca thực tế, chưa phải kết luận loại trừ hỏng cụm sấy.",
+    steps: [
+      { t: "Xác định giấy đang dùng", d: "Kiểm tra định lượng giấy trên bao bì. Không chọn chế độ giấy dày chỉ để thử nếu giấy thực tế là giấy thường mỏng." },
+      { t: "Đổi loại giấy", d: "Trong Printing Preferences / Paper Settings, chọn nhóm giấy dày tương ứng khoảng 90–105 g/m² (tên tùy phiên bản driver). Nếu máy có thiết lập loại giấy tại khay, đặt đồng nhất với driver." },
+      { t: "In kiểm tra", d: "In vài trang, để bản in nguội rồi kiểm tra độ bám toner. Ca đã trao đổi cải thiện sau khi chọn mức 90–105 g/m²." },
+      { t: "Nếu vẫn không bám", d: "Không tiếp tục tăng nhiệt bằng cách chọn giấy dày hơn tùy tiện. Kiểm tra đúng loại toner, giấy và chuyển sang chẩn đoán cụm sấy (film / lô ép, thermistor, nguồn gia nhiệt)." }
+    ],
+    notes: [
+      "Đây là phương án đã cải thiện trên ca thực tế, không khẳng định mọi lỗi bong / không bám toner đều do thiết lập giấy.",
+      "Không dùng chế độ giấy dày cho giấy mỏng nếu không đúng khuyến nghị của hãng."
+    ],
+    refs: []
+  },
+  {
+    id: "canon-lbp2900-usb-offline",
+    title: "Canon LBP2900: máy bật, USB có tiếng nhận nhưng máy in vẫn Offline",
+    codes: ["Offline", "USB", "CAPT"],
+    device: "Máy in",
+    model: "Canon LBP2900 kết nối USB trên Windows 10 / 11",
+    verified: "doc",
+    updated: "2026-11-20",
+    symptom: "Máy in vẫn bật, cắm USB có âm thanh Windows nhận thiết bị nhưng hàng đợi máy in vẫn báo Offline; tùy chọn Use Printer Offline không được chọn.",
+    cause: "Chưa xác định được nguyên nhân gốc trong ca đã trao đổi. Cần phân biệt lỗi hàng đợi / Print Spooler, cổng USB bị gán sai, thiết bị USB không enumerate đúng hoặc driver Canon CAPT.",
+    steps: [
+      { t: "Kiểm tra hàng đợi", d: "Mở control printers → mở hàng đợi Canon LBP2900, kiểm tra Pause Printing / Use Printer Offline và xóa lệnh in đang kẹt nếu có." },
+      { t: "Khởi động lại Print Spooler", d: "Mở services.msc, Restart dịch vụ Print Spooler rồi thử in lại." },
+      { t: "Quan sát Device Manager khi cắm lại USB", d: "Mở Device Manager trước, rút và cắm lại cáp. Xác định Windows hiện Canon LBP2900, USB Printing Support, Unknown USB Device hay không có thay đổi. Kết quả này quyết định nhánh xử lý tiếp theo." },
+      { t: "Kiểm tra cổng máy in", d: "Printer Properties → Ports: kiểm tra máy đang trỏ tới USB001 / USB002 phù hợp; không chọn cổng USB ảo hoặc cổng cũ không còn tồn tại." },
+      { t: "Cài lại driver khi đã xác nhận USB ổn định", d: "Gỡ đúng bản driver lỗi, cài Canon CAPT đúng kiến trúc Windows và kết nối USB theo hướng dẫn cài đặt. Không cài lại lặp đi lặp lại trước khi xác định thiết bị có được Windows nhận đúng hay không." }
+    ],
+    notes: [
+      "Ca trao đổi trước đây chưa có kết quả cuối cùng xác nhận đã sửa thành công; đây là quy trình chẩn đoán đã đề xuất, không phải ca đã nghiệm thu.",
+      "Ưu tiên kiểm tra Device Manager khi cắm lại USB để tách lỗi kết nối vật lý / enumeration khỏi lỗi driver."
+    ],
+    refs: []
+  },
+
 ];
