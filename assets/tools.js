@@ -120,27 +120,65 @@ window.TOOLS = [
   {
     id: "techmaster-deploy",
     name: "TechMaster Deploy",
-    tagline: "Clone / sysprep, kích hoạt, biên bản bản quyền, cài Office bằng ODT.",
+    tagline: "Chuẩn bị Sysprep, xử lý sau clone, cài Office và bàn giao bản quyền.",
     description:
-      "Bộ công cụ triển khai máy độc lập, có GUI. Dùng tạm trước khi các tính năng này được tích hợp vào TechMaster Pro.",
+      "Bộ công cụ triển khai Windows dành cho kỹ thuật viên, giao diện WPF. Chuẩn bị máy gốc trước Sysprep, kiểm tra sau clone, cài phần mềm, kích hoạt Windows / Office bằng giấy phép hợp lệ và xuất biên bản bàn giao. Bản hiện tại phục vụ sử dụng nội bộ.",
     category: "Triển khai Windows",
     platform: "Windows",
-    status: "dev",
-    version: "",
-    updated: "",
-    stack: ["PowerShell", "WinForms"],
+    status: "internal",
+    version: "2.1.12.0",
+    updated: "2026-11-18",
+    stack: ["PowerShell 5.1", "WPF", ".NET Framework"],
     features: [
-      "Sửa lỗi sau clone / sysprep",
-      "Kích hoạt",
-      "Xuất biên bản bản quyền",
-      "Cài Office qua Office Deployment Tool (ODT)"
+      "Chuẩn bị Sysprep: lưu thiết lập Word, kiểm tra phím chụp và dọn shortcut trùng",
+      "Xử lý sau clone: tên máy, định dạng ngày / số, bàn phím và ID UltraViewer",
+      "Kiểm tra / kích hoạt Windows và Office, QR Installation ID và nhận Confirmation ID qua LAN",
+      "Đối chiếu key / Installation ID trước khi nạp CID; kiểm tra key cài đặt chung Windows theo lựa chọn",
+      "Biên bản kiểm tra và hai mẫu xác nhận bàn giao cho khách lẻ / công ty; lưu thông tin đơn vị, chọn hoặc xoá riêng logo",
+      "Tải / cài Office bằng ODT, dùng kho cài đặt lưu trên máy",
+      "Cài ứng dụng từ WinGet hoặc tệp EXE / MSI do kỹ thuật viên thêm tại máy",
+      "Cửa sổ cập nhật, sao lưu và khôi phục phiên bản trước; hướng dẫn nhanh ngay trong app"
     ],
-    requirements: ["Windows 10 / 11", "Quyền Administrator"],
-    download: "",
-    githubRepo: "",
-    source: "",
-    docs: "",
-    changelog: []
+    requirements: [
+      "Windows 10 / 11, Windows PowerShell 5.1 và .NET Framework; chạy với quyền Administrator",
+      "Tải bản đầy đủ (.zip), giải nén toàn bộ rồi chạy TechMaster Deploy.exe trong thư mục vừa giải nén",
+      "Giữ nguyên thư mục App và các tệp đi kèm; file EXE nâng cấp chỉ dành cho bộ app đã có sẵn",
+      "Chưa ký số: Windows SmartScreen hoặc Smart App Control có thể chặn; xem hướng dẫn tải và chạy"
+    ],
+    download: "downloads/TechMaster-Deploy-v2.1.12.0.zip",
+    downloadLabel: "Tải bản đầy đủ (.zip)",
+    downloadName: "TechMaster-Deploy-v2.1.12.0.zip",
+    additionalDownloads: [
+      { label: "EXE nâng cấp", url: "downloads/TechMaster-Update.exe", filename: "TechMaster-Update.exe" }
+    ],
+    githubRepo: "", // tải trực tiếp trên Pages, không phụ thuộc GitHub Releases API
+    source: "https://github.com/dangvien-dev/TechMaster-Deploy",
+    docs: "downloads/techmaster-deploy.html",
+    changelog: [
+      {
+        version: "2.1.12.0", date: "2026-11-18",
+        notes: [
+          "Căn Hướng dẫn nhanh và Liên hệ cùng lề, cỡ chữ với menu",
+          "Giữ vùng trợ giúp trong đúng khung ở cửa sổ thấp; thanh cuộn menu cùng nền tối"
+        ]
+      },
+      {
+        version: "2.1.11.0", date: "2026-11-18",
+        notes: [
+          "Kiểm tra / dọn key chung Windows Pro chưa kích hoạt theo lựa chọn, có biên nhận và hoàn tác",
+          "Ưu tiên key riêng, xác nhận 5 ký tự cuối và đối chiếu lại key / IID trước khi nạp CID",
+          "Office thiếu key hoặc chỉ có Grace / Trial hiện hướng dẫn bằng hộp thoại"
+        ]
+      },
+      {
+        version: "2.1.10.0", date: "2026-11-18",
+        notes: ["Thêm nút Lưu thông tin và Xoá logo riêng tại Biên bản bản quyền"]
+      },
+      {
+        version: "2.1.9.0", date: "2026-11-18",
+        notes: ["Xem trước logo bằng ảnh WPF để cuộn đúng khung, giữ logo gốc khi xuất biên bản"]
+      }
+    ]
   },
   {
     id: "smartservices",

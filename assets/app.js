@@ -154,8 +154,9 @@
   function downloadBtn(t, rel) {
     const url = (rel && rel.url) || t.download;
     if (!url) return `<span class="btn" aria-disabled="true">${ICON.down}Chưa có bản tải</span>`;
-    const label = rel && rel.tag ? `Tải ${esc(rel.tag)}` : (t.version ? `Tải v${esc(t.version)}` : "Tải về");
-    return `<a class="btn primary" href="${esc(url)}" target="_blank" rel="noopener">${ICON.down}${label}</a>`;
+    const label = t.downloadLabel ? esc(t.downloadLabel) : (rel && rel.tag ? `Tải ${esc(rel.tag)}` : (t.version ? `Tải v${esc(t.version)}` : "Tải về"));
+    const download = !rel && t.downloadName ? ` download="${esc(t.downloadName)}"` : "";
+    return `<a class="btn primary" href="${esc(url)}"${download} target="_blank" rel="noopener">${ICON.down}${label}</a>`;
   }
 
   async function fetchRelease(repo) {
@@ -188,6 +189,7 @@
           <div class="hero-text"><h2>${esc(t.name)}</h2><p>${esc(t.tagline)}</p></div>
           <div class="actions">
             ${downloadBtn(t, rel)}
+            ${(t.additionalDownloads || []).map((d) => `<a class="btn outline" href="${esc(d.url)}"${d.filename ? ` download="${esc(d.filename)}"` : ""} target="_blank" rel="noopener">${esc(d.label)}</a>`).join("")}
             ${t.docs ? `<a class="btn outline" href="${esc(t.docs)}" target="_blank" rel="noopener">Hướng dẫn</a>` : ""}
             ${t.source ? `<a class="btn outline" href="${esc(t.source)}" target="_blank" rel="noopener">Source</a>` : ""}
           </div>
