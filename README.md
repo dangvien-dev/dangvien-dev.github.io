@@ -2,6 +2,8 @@
 
 Trang giới thiệu các tool do mình viết. Site tĩnh thuần HTML/CSS/JS — không build, không framework.
 
+Giao diện theo phong cách TechMaster Pro — xem [`docs/DESIGN-SYSTEM.md`](docs/DESIGN-SYSTEM.md).
+
 ## Cấu trúc
 
 ```
