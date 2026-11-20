@@ -5,30 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dang Vien Tools</title>
   <meta name="description" content="Các công cụ IT do Nguyễn Đăng Viên viết, chia sẻ cho kỹ thuật viên.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
-  <header class="topbar">
-    <div class="wrap topbar-in">
-      <a href="#/" class="brand"><span class="brand-mark">&gt;_</span><span id="site-title">Dang Vien Tools</span></a>
-      <nav class="topnav">
-        <a href="#/">Tool</a>
-        <a id="nav-github" href="#" target="_blank" rel="noopener">GitHub</a>
-      </nav>
-    </div>
-  </header>
+  <div class="shell">
+    <!-- Sidebar: mô phỏng MainWindow.xaml của TechMaster Pro -->
+    <aside class="sidebar">
+      <a href="#/" class="brand">
+        <span class="brand-name" id="brand-name">Dang Vien</span>
+        <span class="brand-tag" id="brand-tag">TOOLS</span>
+        <span class="brand-sub" id="brand-sub"></span>
+      </a>
+      <nav class="side-nav" id="side-nav"></nav>
+      <div class="side-foot">
+        <hr>
+        <div class="side-author" id="side-author"></div>
+        <div class="side-contact" id="side-contact"></div>
+        <a class="side-link" id="side-github" href="#" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </aside>
 
-  <main id="app" class="wrap"></main>
-
-  <footer class="footer">
-    <div class="wrap footer-in">
-      <span id="footer-author"></span>
-      <span class="mono dim" id="footer-count"></span>
-    </div>
-  </footer>
+    <section class="content">
+      <!-- Header: mô phỏng HeaderViewTemplate -->
+      <header class="header" id="header"></header>
+      <main class="page" id="app"></main>
+    </section>
+  </div>
 
   <script src="assets/tools.js"></script>
   <script src="assets/app.js"></script>
