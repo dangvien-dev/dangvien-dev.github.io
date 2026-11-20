@@ -234,8 +234,10 @@ window.TOOLS = [
 
 /* Thông tin chung của site */
 window.SITE = {
-  title: "Dang Vien Tools",
-  subtitle: "Các công cụ mình viết để bớt việc lặp lại — chia sẻ cho anh em kỹ thuật.",
+  title: "Dang Vien Dev",
+  brand: "Dang Vien",
+  brandTag: "DEV",
+  subtitle: "Các ứng dụng mình viết để bớt việc lặp lại — chia sẻ cho anh em kỹ thuật.",
   author: "Nguyễn Đăng Viên",
   github: "https://github.com/dangvien-dev",
   contact: "" // email / Zalo / Facebook, để "" nếu không muốn hiện

@@ -1,6 +1,6 @@
-# Dang Vien Tools
+# Dang Vien Dev
 
-Trang giới thiệu các tool do mình viết. Site tĩnh thuần HTML/CSS/JS — không build, không framework.
+Trang giới thiệu các ứng dụng / tool do mình viết. Site tĩnh thuần HTML/CSS/JS — không build, không framework.
 
 Giao diện theo phong cách TechMaster Pro — xem [`docs/DESIGN-SYSTEM.md`](docs/DESIGN-SYSTEM.md).
 
@@ -39,7 +39,20 @@ git remote add origin https://github.com/dangvien-dev/dangvien-dev.github.io.git
 git push -u origin main
 ```
 
-Trên GitHub: **Settings → Pages → Build and deployment → Source: Deploy from a branch → `main` / `(root)`**.
+Trên GitHub: **Settings → Pages → Build and deployment → Source: `GitHub Actions`** (chỉ làm 1 lần).
+
+Mỗi lần push lên `main`, workflow `.github/workflows/pages.yml` sẽ:
+
+- thay placeholder `__BUILD__` trong mọi file `.html` bằng 7 ký tự đầu của commit SHA, nên link `style.css?v=…` / `app.js?v=…` đổi theo từng lần deploy và trình duyệt luôn tải bản mới;
+- tạo `version.json` (`{"build": "<sha>"}`). Trang đang mở kiểm tra file này khi tải, mỗi 5 phút và khi người xem quay lại tab. Nếu khác bản đang chạy thì hiện thông báo **"Trang vừa có bản mới → Tải lại"**.
+
+Không cần tự sửa `?v=` bằng tay nữa. Khi thêm link CSS/JS mới vào HTML, chỉ cần ghi `?v=__BUILD__`.
+
+## Thông báo cho người xem
+
+- **Bản deploy mới:** hiện toast góc dưới phải (xem trên).
+- **Ứng dụng mới / vừa cập nhật:** trình duyệt nhớ `version` + `updated` của từng ứng dụng ở lần ghé trước (`localStorage`). Lần ghé sau, ứng dụng nào mới có nhãn **MỚI**, ứng dụng đổi version/ngày có nhãn **CẬP NHẬT**, kèm khung tóm tắt trên đầu danh sách. Lần ghé đầu tiên không hiện gì.
+- Muốn người xem thấy nhãn **CẬP NHẬT**, chỉ cần đổi `version` hoặc `updated` trong `assets/tools.js`.
 
 - Repo tên `dangvien-dev.github.io` → site ở `https://dangvien-dev.github.io/`
 - Repo tên khác (vd `tools`) → `https://dangvien-dev.github.io/tools/`

@@ -1,0 +1,47 @@
+# Deploy GitHub Pages + gắn mã phiên bản (commit SHA) vào link CSS/JS.
+# Mục đích: mỗi lần deploy, trình duyệt buộc tải CSS/JS mới (hết lỗi lệch cache),
+# và trang tự hiện thông báo "Trang vừa có bản mới" cho người đang mở.
+#
+# Yêu cầu 1 lần: Settings → Pages → Build and deployment → Source: "GitHub Actions".
+name: Deploy Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Gắn mã phiên bản
+        run: |
+          BUILD="${GITHUB_SHA::7}"
+          mkdir _site
+          git archive HEAD | tar -x -C _site
+          rm -rf _site/.github
+          find _site -name '*.html' -exec sed -i "s/__BUILD__/${BUILD}/g" {} +
+          printf '{"build":"%s","time":"%s"}\n' "$BUILD" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > _site/version.json
+          echo "Build: $BUILD"
+          grep -rn "__BUILD__" _site --include='*.html' && { echo "Còn placeholder chưa thay"; exit 1; } || true
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4

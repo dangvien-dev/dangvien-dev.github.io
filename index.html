@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dang Vien Tools</title>
-  <meta name="description" content="Các công cụ IT do Nguyễn Đăng Viên viết, chia sẻ cho kỹ thuật viên.">
-  <link rel="stylesheet" href="assets/style.css">
+  <title>Dang Vien Dev</title>
+  <meta name="description" content="Các ứng dụng do Nguyễn Đăng Viên viết, chia sẻ cho kỹ thuật viên.">
+  <link rel="stylesheet" href="assets/style.css?v=__BUILD__">
 </head>
 <body>
   <div class="shell">
@@ -13,7 +13,7 @@
     <aside class="sidebar">
       <a href="#/" class="brand">
         <span class="brand-name" id="brand-name">Dang Vien</span>
-        <span class="brand-tag" id="brand-tag">TOOLS</span>
+        <span class="brand-tag" id="brand-tag">DEV</span>
         <span class="brand-sub" id="brand-sub"></span>
       </a>
       <nav class="side-nav" id="side-nav"></nav>
@@ -32,7 +32,11 @@
     </section>
   </div>
 
-  <script src="assets/tools.js?v=20261120-deploy-2.1.12.0"></script>
-  <script src="assets/app.js?v=20261120-deploy-2.1.12.0"></script>
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <!-- Placeholder phiên bản (2 gạch dưới + BUILD) được .github/workflows/pages.yml thay bằng mã commit khi deploy -->
+  <script>window.BUILD = "__BUILD__";</script>
+  <script src="assets/tools.js?v=__BUILD__"></script>
+  <script src="assets/app.js?v=__BUILD__"></script>
 </body>
 </html>

@@ -9,6 +9,38 @@
 
   const STATUS = { stable: "Ổn định", beta: "Beta", dev: "Đang phát triển", internal: "Nội bộ" };
 
+  // ---------- localStorage an toàn (có thể bị chặn / trống) ----------
+  const store = {
+    get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (_) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (_) {} }
+  };
+  const session = {
+    get(k) { try { return JSON.parse(sessionStorage.getItem(k)); } catch (_) { return null; } },
+    set(k, v) { try { sessionStorage.setItem(k, JSON.stringify(v)); } catch (_) {} }
+  };
+
+  // ---------- Tool mới / cập nhật kể từ lần ghé trước ----------
+  // Chữ ký = version + updated. Lần ghé đầu tiên không đánh dấu gì.
+  const sig = (t) => `${t.version || ""}|${t.updated || ""}`;
+  const CHANGES = (function () {
+    const cached = session.get("dvt.changes");
+    if (cached) return cached;                       // giữ badge khi F5 trong cùng phiên
+    const prev = store.get("dvt.seen");
+    const now = {};
+    TOOLS.forEach((t) => { now[t.id] = sig(t); });
+    const changes = {};
+    if (prev && prev.tools) {
+      TOOLS.forEach((t) => {
+        if (!(t.id in prev.tools)) changes[t.id] = "new";
+        else if (prev.tools[t.id] !== now[t.id]) changes[t.id] = "updated";
+      });
+    }
+    store.set("dvt.seen", { tools: now, at: new Date().toISOString() });
+    session.set("dvt.changes", changes);
+    return changes;
+  })();
+  const CHANGE_LABEL = { new: "Mới", updated: "Cập nhật" };
+
   // Màu theo nhóm — docs/HANDOFF.md §3 (TechMaster Pro)
   const GROUP_COLORS = [
     { fg: "#2563EB", bg: "#EFF6FF" }, // xanh dương
@@ -24,6 +56,7 @@
     back:   '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 18l-6-6 6-6"/></svg>',
     down:   '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14"/></svg>',
     check:  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M5 12l5 5 9-10"/></svg>',
+    bell:   '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>',
     tool:   '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></svg>'
   };
 
@@ -50,8 +83,8 @@
 
   // ---------- chrome ----------
   document.getElementById("brand-name").textContent = SITE.brand || "Dang Vien";
-  document.getElementById("brand-tag").textContent = SITE.brandTag || "TOOLS";
-  document.getElementById("brand-sub").textContent = `${TOOLS.length} công cụ`;
+  document.getElementById("brand-tag").textContent = SITE.brandTag || "DEV";
+  document.getElementById("brand-sub").textContent = `${TOOLS.length} ứng dụng`;
   document.getElementById("side-author").textContent = SITE.author || "";
   const contact = document.getElementById("side-contact");
   if (SITE.contact) contact.textContent = SITE.contact; else contact.remove();
@@ -65,7 +98,7 @@
       return `<button class="side-item" data-cat="${esc(val)}" aria-current="${cur}">
         ${icon}<span>${esc(label)}</span><span class="count">${count}</span></button>`;
     };
-    let html = item("Tất cả", "TẤT CẢ TOOL", TOOLS.length, ICON.grid);
+    let html = item("Tất cả", "TẤT CẢ ỨNG DỤNG", TOOLS.length, ICON.grid);
     if (CATEGORIES.length > 1) {
       html += `<div class="side-group">NHÓM</div>`;
       html += CATEGORIES.map((c) => {
@@ -99,7 +132,7 @@
         <div class="tool-top">
           <div class="tile">${esc(initials(t.name))}</div>
           <div style="flex:1;min-width:0">
-            <h3 class="tool-name">${esc(t.name)}</h3>
+            <h3 class="tool-name">${esc(t.name)}${CHANGES[t.id] ? ` <span class="chg ${CHANGES[t.id]}">${CHANGE_LABEL[CHANGES[t.id]]}</span>` : ""}</h3>
             <div class="tool-cat">${esc(t.category)}</div>
           </div>
           ${badge(t.status)}
@@ -115,12 +148,27 @@
     const list = TOOLS.filter(matches);
     document.getElementById("grid").innerHTML = list.length
       ? list.map(toolCard).join("")
-      : `<div class="empty" style="grid-column:1/-1">Không có tool nào khớp bộ lọc.</div>`;
+      : `<div class="empty" style="grid-column:1/-1">Không có ứng dụng nào khớp bộ lọc.</div>`;
+  }
+
+  function changesNotice() {
+    const ids = Object.keys(CHANGES);
+    if (!ids.length || session.get("dvt.noticeClosed")) return "";
+    const items = ids.map((id) => {
+      const t = TOOLS.find((x) => x.id === id);
+      if (!t) return "";
+      const what = CHANGES[id] === "new" ? "mới thêm" : (t.version ? `cập nhật v${esc(t.version)}` : "vừa cập nhật");
+      return `<a href="#/tool/${encodeURIComponent(id)}"><b>${esc(t.name)}</b></a> <span class="dim">${what}</span>`;
+    }).filter(Boolean);
+    return `<div class="card notice" role="status">
+      <span class="notice-icon">${ICON.bell}</span>
+      <div class="notice-body"><b>Có thay đổi từ lần trước bạn ghé</b><div>${items.join(" · ")}</div></div>
+      <button class="hbtn" id="notice-close" aria-label="Đóng">✕</button></div>`;
   }
 
   function renderList() {
     renderSidebar(null);
-    const title = state.category === "Tất cả" ? "TẤT CẢ TOOL" : state.category.toUpperCase();
+    const title = state.category === "Tất cả" ? "TẤT CẢ ỨNG DỤNG" : state.category.toUpperCase();
     header.innerHTML = `
       <div class="h-title"><span class="h-icon">${state.category === "Tất cả" ? ICON.grid : ICON.folder}</span>
         <span class="h-bar"></span><h1>${esc(title)}</h1></div>
@@ -130,7 +178,9 @@
         <label class="search">${ICON.search}
           <input id="q" type="search" placeholder="Tìm tên, tính năng, công nghệ…" value="${esc(state.q)}" autocomplete="off"></label>
       </div>`;
-    app.innerHTML = `${SITE.subtitle ? `<p class="intro">${esc(SITE.subtitle)}</p>` : ""}<div id="grid" class="grid"></div>`;
+    app.innerHTML = `${SITE.subtitle ? `<p class="intro">${esc(SITE.subtitle)}</p>` : ""}${changesNotice()}<div id="grid" class="grid"></div>`;
+    const dismiss = app.querySelector("#notice-close");
+    if (dismiss) dismiss.addEventListener("click", () => { session.set("dvt.noticeClosed", true); app.querySelector(".notice").remove(); });
 
     header.querySelector("#q").addEventListener("input", (e) => { state.q = e.target.value.trim(); renderGrid(); });
     header.querySelectorAll(".seg button").forEach((b) => b.addEventListener("click", () => {
@@ -180,7 +230,7 @@
     const updated = fmtDate((rel && rel.date) || t.updated) || "—";
     header.innerHTML = `
       <div class="h-title"><span class="h-icon">${ICON.tool}</span><span class="h-bar"></span><h1>${esc(t.name)}</h1></div>
-      <div class="h-actions"><a class="hbtn" href="#/">${ICON.back}Tất cả tool</a></div>`;
+      <div class="h-actions"><a class="hbtn" href="#/">${ICON.back}Tất cả ứng dụng</a></div>`;
 
     app.innerHTML = `
       <div style="${gvars(t.category)}">
@@ -221,11 +271,11 @@
     if (!t) {
       renderSidebar("x");
       header.innerHTML = `<div class="h-title"><span class="h-bar"></span><h1>Không tìm thấy</h1></div>
-        <div class="h-actions"><a class="hbtn" href="#/">${ICON.back}Tất cả tool</a></div>`;
-      app.innerHTML = `<div class="empty">Không tìm thấy tool “${esc(id)}”.</div>`;
+        <div class="h-actions"><a class="hbtn" href="#/">${ICON.back}Tất cả ứng dụng</a></div>`;
+      app.innerHTML = `<div class="empty">Không tìm thấy ứng dụng “${esc(id)}”.</div>`;
       return;
     }
-    document.title = `${t.name} · ${SITE.title || "Tools"}`;
+    document.title = `${t.name} · ${SITE.title || "Dang Vien Dev"}`;
     renderDetail(t, null);
     if (t.githubRepo) {
       const rel = await fetchRelease(t.githubRepo);
@@ -237,9 +287,38 @@
     const m = location.hash.match(/^#\/tool\/(.+)$/);
     window.scrollTo(0, 0);
     if (m) showDetail(decodeURIComponent(m[1]));
-    else { document.title = SITE.title || "Tools"; renderList(); }
+    else { document.title = SITE.title || "Dang Vien Dev"; renderList(); }
   }
 
   window.addEventListener("hashchange", route);
   route();
+
+  // ---------- Phát hiện bản deploy mới ----------
+  // window.BUILD được workflow thay bằng mã commit; mở file cục bộ thì vẫn là placeholder → bỏ qua.
+  const BUILD = String(window.BUILD || "");
+  let updateShown = false;
+  async function checkUpdate() {
+    if (!BUILD || BUILD.indexOf("BUILD") !== -1 || updateShown) return;
+    try {
+      const r = await fetch(`version.json?t=${Date.now()}`, { cache: "no-store" });
+      if (!r.ok) return;
+      const j = await r.json();
+      if (j.build && j.build !== BUILD) showUpdateToast();
+    } catch (_) {}
+  }
+  function showUpdateToast() {
+    updateShown = true;
+    const box = document.getElementById("toasts");
+    if (!box) return;
+    box.innerHTML = `<div class="card toast" role="alert">
+      <span class="notice-icon">${ICON.bell}</span>
+      <div class="notice-body"><b>Trang vừa có bản mới</b><div class="dim">Tải lại để xem nội dung mới nhất.</div></div>
+      <button class="btn primary" id="toast-reload">Tải lại</button>
+      <button class="hbtn" id="toast-close" aria-label="Để sau">✕</button></div>`;
+    box.querySelector("#toast-reload").addEventListener("click", () => location.reload());
+    box.querySelector("#toast-close").addEventListener("click", () => { box.innerHTML = ""; });
+  }
+  checkUpdate();
+  setInterval(checkUpdate, 5 * 60 * 1000);
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") checkUpdate(); });
 })();
