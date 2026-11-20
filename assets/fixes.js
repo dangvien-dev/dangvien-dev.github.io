@@ -7,7 +7,7 @@
  *  codes    : mã lỗi hiển thị dạng tag, vd ["0x00000709"]
  *  device   : "Máy tính" | "Máy in" | "Photocopy" | "Máy scan" | "Mạng & chia sẻ"
  *  model    : áp dụng cho dòng máy / phiên bản nào
- *  verified : "field" = đã xử lý thành công thực tế | "doc" = quy trình chuẩn theo tài liệu hãng / kinh nghiệm
+ *  verified : "field" = đã xử lý thành công thực tế | "improved" = đã cải thiện nhưng chưa xác nhận dứt điểm | "unresolved" = chưa xác nhận kết quả | "doc" = quy trình chuẩn theo tài liệu hãng / kinh nghiệm
  *  updated  : "YYYY-MM-DD"
  *  symptom  : hiện tượng
  *  cause    : nguyên nhân
@@ -409,18 +409,18 @@ window.FIXES = [
     codes: ["Mực không bám", "90–105 g/m²"],
     device: "Máy in",
     model: "Canon LBP243dw",
-    verified: "field",
+    verified: "improved",
     updated: "2026-11-20",
-    symptom: "Bản in có hiện tượng mực / toner bám giấy không tốt. Ca thực tế cải thiện sau khi đổi thiết lập loại giấy sang mức 90–105 g/m².",
-    cause: "Thiết lập loại giấy trong driver hoặc trên máy có thể chưa khớp với định lượng giấy thực tế. Máy điều chỉnh chế độ cụm sấy theo loại giấy; chọn đúng nhóm giấy dày có thể giúp toner bám tốt hơn. Đây là nguyên nhân phù hợp với kết quả ca thực tế, chưa phải kết luận loại trừ hỏng cụm sấy.",
+    symptom: "Hình ảnh toner có in lên giấy nhưng không bám chắc; lau nhẹ bị bay thành hạt / chấm mịn. Từ tờ thứ 2 hiện tượng bong nặng hơn. Đã loại trừ giấy; chuyển thiết lập định lượng 90–105 g/m² thì đỡ rõ, nhưng chưa xác nhận sửa dứt điểm.",
+    cause: "Chưa xác định chắc chắn. Việc cải thiện khi chọn 90–105 g/m² gợi ý cần kiểm tra chế độ điều khiển cụm sấy, màng sấy / trục ép hoặc tính tương thích toner; không đủ bằng chứng để kết luận riêng thiết lập giấy là nguyên nhân gốc.",
     steps: [
       { t: "Xác định giấy đang dùng", d: "Kiểm tra định lượng giấy trên bao bì. Không chọn chế độ giấy dày chỉ để thử nếu giấy thực tế là giấy thường mỏng." },
       { t: "Đổi loại giấy", d: "Trong Printing Preferences / Paper Settings, chọn nhóm giấy dày tương ứng khoảng 90–105 g/m² (tên tùy phiên bản driver). Nếu máy có thiết lập loại giấy tại khay, đặt đồng nhất với driver." },
-      { t: "In kiểm tra", d: "In vài trang, để bản in nguội rồi kiểm tra độ bám toner. Ca đã trao đổi cải thiện sau khi chọn mức 90–105 g/m²." },
+      { t: "In kiểm tra", d: "So sánh chế độ giấy thường với 90–105 g/m² trên cùng loại giấy; có thể cho máy nghỉ khoảng 10 phút rồi in lại để đối chiếu. Ca đã trao đổi đỡ bong rõ ở mức 90–105 g/m², nhưng chưa có xác nhận hết lỗi hoàn toàn." },
       { t: "Nếu vẫn không bám", d: "Không tiếp tục tăng nhiệt bằng cách chọn giấy dày hơn tùy tiện. Kiểm tra đúng loại toner, giấy và chuyển sang chẩn đoán cụm sấy (film / lô ép, thermistor, nguồn gia nhiệt)." }
     ],
     notes: [
-      "Đây là phương án đã cải thiện trên ca thực tế, không khẳng định mọi lỗi bong / không bám toner đều do thiết lập giấy.",
+      "Trạng thái: đã cải thiện rõ nhưng chưa xác nhận sửa dứt điểm. Không khẳng định mọi lỗi bong / không bám toner đều do thiết lập giấy.",
       "Không dùng chế độ giấy dày cho giấy mỏng nếu không đúng khuyến nghị của hãng."
     ],
     refs: []
@@ -431,7 +431,7 @@ window.FIXES = [
     codes: ["Offline", "USB", "CAPT"],
     device: "Máy in",
     model: "Canon LBP2900 kết nối USB trên Windows 10 / 11",
-    verified: "doc",
+    verified: "unresolved",
     updated: "2026-11-20",
     symptom: "Máy in vẫn bật, cắm USB có âm thanh Windows nhận thiết bị nhưng hàng đợi máy in vẫn báo Offline; tùy chọn Use Printer Offline không được chọn.",
     cause: "Chưa xác định được nguyên nhân gốc trong ca đã trao đổi. Cần phân biệt lỗi hàng đợi / Print Spooler, cổng USB bị gán sai, thiết bị USB không enumerate đúng hoặc driver Canon CAPT.",
