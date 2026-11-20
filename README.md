@@ -10,6 +10,7 @@ Giao diện theo phong cách TechMaster Pro — xem [`docs/DESIGN-SYSTEM.md`](do
 index.html          # khung trang
 downloads/          # gói app / EXE nâng cấp / SHA256 / hướng dẫn tải
 assets/tools.js     # DỮ LIỆU — chỉ sửa file này khi thêm/cập nhật tool
+assets/fixes.js     # DỮ LIỆU kho lỗi (#/loi) — lỗi máy tính / máy in / photocopy / scan đã có cách xử lý
 assets/app.js       # render danh sách, tìm kiếm, bộ lọc, trang chi tiết (#/tool/<id>)
 assets/style.css    # giao diện
 .nojekyll           # tắt Jekyll trên GitHub Pages
@@ -27,6 +28,16 @@ Link tải — chọn 1 trong 2:
 - `githubRepo: "dangvien-dev/<repo>"`: trang tự lấy release mới nhất qua GitHub API, nút tải trỏ tới asset đầu tiên. **Chỉ chạy với repo public**; repo private API trả 404 → trang dùng lại field `download`.
 
 GitHub API không đăng nhập giới hạn 60 request/giờ/IP — đủ cho site giới thiệu.
+
+## Kho lỗi (`#/loi`)
+
+Trang tra cứu lỗi: `https://dangvien-dev.github.io/#/loi`, chi tiết `#/loi/<id>`.
+
+Thêm lỗi: copy một object trong `window.FIXES` ở `assets/fixes.js`, đổi `id`. Bộ lọc theo thiết bị tự sinh từ field `device`.
+
+- `verified: "field"` = đã xử lý thành công trên máy thật; `"doc"` = quy trình chuẩn theo tài liệu hãng.
+- Trong `symptom`, `cause`, `steps[].d`, `notes` dùng `` `code` `` và `**đậm**`; `steps[].cmd` hiện thành khối lệnh có nút Copy.
+- Không ghi thông tin khách hàng (tên máy, IP, mật khẩu thật) — site công khai.
 
 ## Deploy lên GitHub Pages
 

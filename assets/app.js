@@ -2,6 +2,7 @@
   "use strict";
 
   const TOOLS = window.TOOLS || [];
+  const FIXES = window.FIXES || [];
   const SITE = window.SITE || {};
   const app = document.getElementById("app");
   const header = document.getElementById("header");
@@ -57,10 +58,13 @@
     down:   '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14"/></svg>',
     check:  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M5 12l5 5 9-10"/></svg>',
     bell:   '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>',
+    bug:    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 7V5a4 4 0 0 1 8 0v2"/><rect x="6" y="7" width="12" height="13" rx="6"/><path d="M12 11v9M3 13h3M18 13h3M4 7l2.5 2M20 7l-2.5 2M4 20l2.5-2M20 20l-2.5-2"/></svg>',
+    copy:   '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>',
     tool:   '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></svg>'
   };
 
-  const state = { q: "", platform: "Tất cả", category: "Tất cả" };
+  const state = { q: "", platform: "Tất cả", category: "Tất cả", fixQ: "", fixDevice: "Tất cả", fixVerified: "Tất cả" };
+  const VERIFIED = { field: "Đã xử lý thực tế", doc: "Quy trình chuẩn" };
   const releaseCache = {};
 
   // ---------- helpers ----------
@@ -81,18 +85,27 @@
   const groupOf = (cat) => GROUP_COLORS[Math.max(0, CATEGORIES.indexOf(cat)) % GROUP_COLORS.length];
   const gvars = (cat) => { const g = groupOf(cat); return `--g-fg:${g.fg};--g-bg:${g.bg}`; };
 
+  const DEVICES = uniq(FIXES.map((f) => f.device));
+  const devOf = (d) => GROUP_COLORS[Math.max(0, DEVICES.indexOf(d)) % GROUP_COLORS.length];
+  const dvars = (d) => { const g = devOf(d); return `--g-fg:${g.fg};--g-bg:${g.bg}`; };
+  // `code` và **đậm** trong nội dung kho lỗi (escape trước rồi mới format)
+  const fmt = (s) => esc(s)
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+
   // ---------- chrome ----------
   document.getElementById("brand-name").textContent = SITE.brand || "Dang Vien";
   document.getElementById("brand-tag").textContent = SITE.brandTag || "DEV";
-  document.getElementById("brand-sub").textContent = `${TOOLS.length} ứng dụng`;
+  document.getElementById("brand-sub").textContent =
+    `${TOOLS.length} ứng dụng` + (FIXES.length ? ` · ${FIXES.length} lỗi` : "");
   document.getElementById("side-author").textContent = SITE.author || "";
   const contact = document.getElementById("side-contact");
   if (SITE.contact) contact.textContent = SITE.contact; else contact.remove();
   const gh = document.getElementById("side-github");
   if (SITE.github) gh.href = SITE.github; else gh.remove();
 
-  function renderSidebar(activeId) {
-    const onList = !activeId;
+  function renderSidebar(activeId, mode = "tools") {
+    const onList = !activeId && mode === "tools";
     const item = (val, label, count, icon) => {
       const cur = onList && state.category === val;
       return `<button class="side-item" data-cat="${esc(val)}" aria-current="${cur}">
@@ -107,8 +120,27 @@
         return item(c, c, TOOLS.filter((t) => t.category === c).length, dot);
       }).join("");
     }
+    if (FIXES.length) {
+      const fitem = (val, label, count, icon) => {
+        const cur = mode === "fixes" && state.fixDevice === val;
+        return `<button class="side-item" data-fdev="${esc(val)}" aria-current="${cur}">
+          ${icon}<span>${esc(label)}</span><span class="count">${count}</span></button>`;
+      };
+      html += `<div class="side-group">TRA CỨU LỖI</div>`;
+      html += fitem("Tất cả", "KHO LỖI", FIXES.length, ICON.bug);
+      html += DEVICES.map((d) => {
+        const g = devOf(d);
+        const dot = `<svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5" fill="${g.fg}"/></svg>`;
+        return fitem(d, d, FIXES.filter((f) => f.device === d).length, dot);
+      }).join("");
+    }
     sideNav.innerHTML = html;
-    sideNav.querySelectorAll(".side-item").forEach((b) => b.addEventListener("click", () => {
+    sideNav.querySelectorAll(".side-item[data-fdev]").forEach((b) => b.addEventListener("click", () => {
+      state.fixDevice = b.dataset.fdev;
+      if (location.hash !== "#/loi") location.hash = "#/loi";
+      else route();
+    }));
+    sideNav.querySelectorAll(".side-item[data-cat]").forEach((b) => b.addEventListener("click", () => {
       state.category = b.dataset.cat;
       if (location.hash && location.hash !== "#/") location.hash = "#/";
       else route();
@@ -283,10 +315,123 @@
     }
   }
 
+  // ---------- kho lỗi ----------
+  function fixMatches(f) {
+    if (state.fixDevice !== "Tất cả" && f.device !== state.fixDevice) return false;
+    if (state.fixVerified !== "Tất cả" && f.verified !== state.fixVerified) return false;
+    if (!state.fixQ) return true;
+    const hay = norm([f.title, f.model, f.device, f.symptom, f.cause, ...(f.codes || []),
+      ...(f.steps || []).map((s) => `${s.t} ${s.d} ${s.cmd || ""}`), ...(f.notes || [])].join(" "));
+    return norm(state.fixQ).split(/\s+/).every((w) => hay.includes(w));
+  }
+
+  const vbadge = (v) => `<span class="badge ${v === "field" ? "stable" : "beta"}">${esc(VERIFIED[v] || v || "—")}</span>`;
+
+  function fixCard(f) {
+    return `
+      <a class="card tool fix" style="${dvars(f.device)}" href="#/loi/${encodeURIComponent(f.id)}">
+        <div class="tool-top">
+          <div style="flex:1;min-width:0">
+            <div class="tool-cat">${esc(f.device)}</div>
+            <h3 class="tool-name">${esc(f.title)}</h3>
+          </div>
+        </div>
+        <div class="tags">${(f.codes || []).map((c) => `<span class="tag code">${esc(c)}</span>`).join("")}</div>
+        <p>${fmt(f.symptom)}</p>
+        <div class="tool-foot"><span class="fix-model">${esc(f.model)}</span>${vbadge(f.verified)}</div>
+      </a>`;
+  }
+
+  function renderFixGrid() {
+    const list = FIXES.filter(fixMatches);
+    document.getElementById("grid").innerHTML = list.length
+      ? list.map(fixCard).join("")
+      : `<div class="empty" style="grid-column:1/-1">Không có lỗi nào khớp. Thử gõ mã lỗi (vd 0x709, C447) hoặc tên máy.</div>`;
+    const c = document.getElementById("fix-count");
+    if (c) c.textContent = `${list.length} / ${FIXES.length} lỗi`;
+  }
+
+  function renderFixList() {
+    renderSidebar(null, "fixes");
+    const title = state.fixDevice === "Tất cả" ? "KHO LỖI" : state.fixDevice.toUpperCase();
+    const opts = [["Tất cả", "Tất cả"], ["field", VERIFIED.field], ["doc", VERIFIED.doc]];
+    header.innerHTML = `
+      <div class="h-title"><span class="h-icon">${ICON.bug}</span><span class="h-bar"></span><h1>${esc(title)}</h1></div>
+      <div class="h-actions">
+        <div class="seg" role="group">${opts.map(([v, l]) =>
+          `<button data-v="${esc(v)}" aria-pressed="${state.fixVerified === v}">${esc(l)}</button>`).join("")}</div>
+        <label class="search">${ICON.search}
+          <input id="fq" type="search" placeholder="Mã lỗi, tên máy, hiện tượng…" value="${esc(state.fixQ)}" autocomplete="off"></label>
+      </div>`;
+    app.innerHTML = `<p class="intro">Các lỗi máy tính, máy in, photocopy, máy scan đã có phương án xử lý.
+      <strong>Đã xử lý thực tế</strong>: đã sửa thành công trên máy khách. <strong>Quy trình chuẩn</strong>: theo tài liệu hãng / kinh nghiệm, áp dụng cho đúng dòng máy ghi trong mục.
+      <span id="fix-count" class="muted"></span></p><div id="grid" class="grid"></div>`;
+    header.querySelector("#fq").addEventListener("input", (e) => { state.fixQ = e.target.value.trim(); renderFixGrid(); });
+    header.querySelectorAll(".seg button").forEach((b) => b.addEventListener("click", () => {
+      state.fixVerified = b.dataset.v;
+      header.querySelectorAll(".seg button").forEach((x) => x.setAttribute("aria-pressed", x === b));
+      renderFixGrid();
+    }));
+    renderFixGrid();
+  }
+
+  function renderFixDetail(id) {
+    const f = FIXES.find((x) => x.id === id);
+    renderSidebar(null, "fixes");
+    if (!f) {
+      header.innerHTML = `<div class="h-title"><span class="h-bar"></span><h1>Không tìm thấy</h1></div>
+        <div class="h-actions"><a class="hbtn" href="#/loi">${ICON.back}Kho lỗi</a></div>`;
+      app.innerHTML = `<div class="empty">Không tìm thấy lỗi “${esc(id)}”.</div>`;
+      return;
+    }
+    document.title = `${f.title} · ${SITE.title || "Dang Vien Dev"}`;
+    header.innerHTML = `
+      <div class="h-title"><span class="h-icon">${ICON.bug}</span><span class="h-bar"></span><h1>${esc(f.title)}</h1></div>
+      <div class="h-actions"><a class="hbtn" href="#/loi">${ICON.back}Kho lỗi</a></div>`;
+    const steps = (f.steps || []).map((s, i) => `
+      <li class="step"><span class="step-no">${i + 1}</span><div class="step-body">
+        <div class="step-t">${fmt(s.t)}</div>
+        ${s.d ? `<div class="step-d">${fmt(s.d)}</div>` : ""}
+        ${s.cmd ? `<div class="cmd"><button class="copy" type="button" title="Copy">${ICON.copy}Copy</button><pre>${esc(s.cmd)}</pre></div>` : ""}
+      </div></li>`).join("");
+    app.innerHTML = `
+      <div style="${dvars(f.device)}">
+        <div class="detail">
+          <div>
+            <div class="card sec"><h3>Hiện tượng</h3><p>${fmt(f.symptom)}</p></div>
+            <div class="card sec"><h3>Nguyên nhân</h3><p>${fmt(f.cause)}</p></div>
+            <div class="card sec"><h3>Cách xử lý</h3><ol class="steps">${steps}</ol></div>
+            ${f.notes && f.notes.length ? `<div class="card sec warn"><h3>Lưu ý</h3><ul class="notes">${f.notes.map((n) => `<li>${fmt(n)}</li>`).join("")}</ul></div>` : ""}
+          </div>
+          <div class="card sec side-card">
+            <h3>Thông tin</h3>
+            <dl class="kv">
+              <dt>Trạng thái</dt><dd>${vbadge(f.verified)}</dd>
+              <dt>Thiết bị</dt><dd style="color:var(--g-fg)">${esc(f.device)}</dd>
+              <dt>Áp dụng</dt><dd>${esc(f.model)}</dd>
+              <dt>Cập nhật</dt><dd class="mono">${esc(fmtDate(f.updated) || "—")}</dd>
+            </dl>
+            <div class="tags">${(f.codes || []).map((c) => `<span class="tag code">${esc(c)}</span>`).join("")}</div>
+            ${f.refs && f.refs.length ? `<div class="refs"><div class="refs-h">Tham khảo</div>${f.refs.map((r) =>
+              `<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.label)}</a>`).join("")}</div>` : ""}
+          </div>
+        </div>
+      </div>`;
+    app.querySelectorAll(".cmd .copy").forEach((b) => b.addEventListener("click", async () => {
+      const text = b.nextElementSibling.textContent;
+      try { await navigator.clipboard.writeText(text); b.lastChild.textContent = "Đã copy"; }
+      catch (_) { b.lastChild.textContent = "Copy lỗi"; }
+      setTimeout(() => { b.lastChild.textContent = "Copy"; }, 1500);
+    }));
+  }
+
   function route() {
-    const m = location.hash.match(/^#\/tool\/(.+)$/);
+    const h = location.hash;
     window.scrollTo(0, 0);
-    if (m) showDetail(decodeURIComponent(m[1]));
+    let m;
+    if ((m = h.match(/^#\/tool\/(.+)$/))) showDetail(decodeURIComponent(m[1]));
+    else if ((m = h.match(/^#\/loi\/(.+)$/))) renderFixDetail(decodeURIComponent(m[1]));
+    else if (h === "#/loi") { document.title = `Kho lỗi · ${SITE.title || "Dang Vien Dev"}`; renderFixList(); }
     else { document.title = SITE.title || "Dang Vien Dev"; renderList(); }
   }
 
