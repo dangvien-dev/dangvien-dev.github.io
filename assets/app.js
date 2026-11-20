@@ -5,8 +5,6 @@
   const FIXES = window.FIXES || [];
   const SITE = window.SITE || {};
   const app = document.getElementById("app");
-  const header = document.getElementById("header");
-  const sideNav = document.getElementById("side-nav");
 
   const STATUS = { stable: "Ổn định", beta: "Beta", dev: "Đang phát triển", internal: "Nội bộ" };
 
@@ -94,58 +92,38 @@
     .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
 
   // ---------- chrome ----------
-  document.getElementById("brand-name").textContent = SITE.brand || "Dang Vien";
-  document.getElementById("brand-tag").textContent = SITE.brandTag || "DEV";
-  document.getElementById("brand-sub").textContent =
-    `${TOOLS.length} ứng dụng` + (FIXES.length ? ` · ${FIXES.length} lỗi` : "");
-  document.getElementById("side-author").textContent = SITE.author || "";
-  const contact = document.getElementById("side-contact");
+  const setText = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  setText("brand-name", SITE.brand || "Dang Vien");
+  setText("brand-tag", SITE.brandTag || "DEV");
+  setText("foot-brand", SITE.brand || "Dang Vien");
+  setText("foot-tag", SITE.brandTag || "DEV");
+  setText("foot-sub", SITE.subtitle || "");
+  setText("foot-author", SITE.author ? `© ${new Date().getFullYear()} ${SITE.author}` : "");
+  const contact = document.getElementById("foot-contact");
   if (SITE.contact) contact.textContent = SITE.contact; else contact.remove();
-  const gh = document.getElementById("side-github");
-  if (SITE.github) gh.href = SITE.github; else gh.remove();
+  ["nav-github", "foot-github"].forEach((id) => {
+    const a = document.getElementById(id);
+    if (SITE.github) a.href = SITE.github; else a.remove();
+  });
+  if (!FIXES.length) document.querySelectorAll('a[href="#/loi"]').forEach((a) => a.remove());
 
-  function renderSidebar(activeId, mode = "tools") {
-    const onList = !activeId && mode === "tools";
-    const item = (val, label, count, icon) => {
-      const cur = onList && state.category === val;
-      return `<button class="side-item" data-cat="${esc(val)}" aria-current="${cur}">
-        ${icon}<span>${esc(label)}</span><span class="count">${count}</span></button>`;
-    };
-    let html = item("Tất cả", "TẤT CẢ ỨNG DỤNG", TOOLS.length, ICON.grid);
-    if (CATEGORIES.length > 1) {
-      html += `<div class="side-group">NHÓM</div>`;
-      html += CATEGORIES.map((c) => {
-        const g = groupOf(c);
-        const dot = `<svg width="16" height="16" viewBox="0 0 16 16"><rect x="3" y="3" width="10" height="10" rx="3" fill="${g.fg}"/></svg>`;
-        return item(c, c, TOOLS.filter((t) => t.category === c).length, dot);
-      }).join("");
-    }
-    if (FIXES.length) {
-      const fitem = (val, label, count, icon) => {
-        const cur = mode === "fixes" && state.fixDevice === val;
-        return `<button class="side-item" data-fdev="${esc(val)}" aria-current="${cur}">
-          ${icon}<span>${esc(label)}</span><span class="count">${count}</span></button>`;
-      };
-      html += `<div class="side-group">TRA CỨU LỖI</div>`;
-      html += fitem("Tất cả", "KHO LỖI", FIXES.length, ICON.bug);
-      html += DEVICES.map((d) => {
-        const g = devOf(d);
-        const dot = `<svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5" fill="${g.fg}"/></svg>`;
-        return fitem(d, d, FIXES.filter((f) => f.device === d).length, dot);
-      }).join("");
-    }
-    sideNav.innerHTML = html;
-    sideNav.querySelectorAll(".side-item[data-fdev]").forEach((b) => b.addEventListener("click", () => {
-      state.fixDevice = b.dataset.fdev;
-      if (location.hash !== "#/loi") location.hash = "#/loi";
-      else route();
-    }));
-    sideNav.querySelectorAll(".side-item[data-cat]").forEach((b) => b.addEventListener("click", () => {
-      state.category = b.dataset.cat;
-      if (location.hash && location.hash !== "#/") location.hash = "#/";
-      else route();
-    }));
+  // Đánh dấu mục menu đang xem
+  function setNav(section) {
+    document.querySelectorAll("#nav a[data-nav]").forEach((a) =>
+      a.setAttribute("aria-current", a.dataset.nav === section ? "page" : "false"));
   }
+
+  // Chip lọc (nhóm / thiết bị) — màu theo nhóm
+  const chips = (key, values, current, colorOf) =>
+    `<div class="chips" role="group">` +
+    ["Tất cả", ...values].map((v) => {
+      const g = v === "Tất cả" ? null : colorOf(v);
+      return `<button class="chip" data-${key}="${esc(v)}" aria-pressed="${current === v}"${g ? ` style="--g-fg:${g.fg};--g-bg:${g.bg}"` : ""}>` +
+        `${g ? '<span class="chip-dot"></span>' : ""}${esc(v)}</button>`;
+    }).join("") + `</div>`;
+
+  const crumb = (items) => `<nav class="crumb">${items.map(([href, label]) =>
+    href ? `<a href="${href}">${esc(label)}</a>` : `<span>${esc(label)}</span>`).join('<span class="sep">/</span>')}</nav>`;
 
   // ---------- list ----------
   function matches(t) {
@@ -198,26 +176,74 @@
       <button class="hbtn" id="notice-close" aria-label="Đóng">✕</button></div>`;
   }
 
+  function fixesTeaser() {
+    if (!FIXES.length) return "";
+    const latest = FIXES.slice().sort((a, b) => String(b.updated || "").localeCompare(String(a.updated || ""))).slice(0, 3);
+    return `
+      <section class="section alt">
+        <div class="wrap">
+          <div class="section-head">
+            <div><h2>Kho lỗi</h2><p>Lỗi máy tính, máy in, photocopy, máy scan đã có cách xử lý — tra theo mã lỗi hoặc tên máy.</p></div>
+            <a class="btn outline" href="#/loi">Xem ${FIXES.length} lỗi →</a>
+          </div>
+          <div class="grid">${latest.map(fixCard).join("")}</div>
+        </div>
+      </section>`;
+  }
+
   function renderList() {
-    renderSidebar(null);
-    const title = state.category === "Tất cả" ? "TẤT CẢ ỨNG DỤNG" : state.category.toUpperCase();
-    header.innerHTML = `
-      <div class="h-title"><span class="h-icon">${state.category === "Tất cả" ? ICON.grid : ICON.folder}</span>
-        <span class="h-bar"></span><h1>${esc(title)}</h1></div>
-      <div class="h-actions">
-        ${PLATFORMS.length > 1 ? `<div class="seg" role="group">${["Tất cả", ...PLATFORMS].map((p) =>
-          `<button data-p="${esc(p)}" aria-pressed="${state.platform === p}">${esc(p)}</button>`).join("")}</div>` : ""}
-        <label class="search">${ICON.search}
-          <input id="q" type="search" placeholder="Tìm tên, tính năng, công nghệ…" value="${esc(state.q)}" autocomplete="off"></label>
-      </div>`;
-    app.innerHTML = `${SITE.subtitle ? `<p class="intro">${esc(SITE.subtitle)}</p>` : ""}${changesNotice()}<div id="grid" class="grid"></div>`;
+    setNav("apps");
+    const platforms = [...new Set(TOOLS.map((t) => t.platform))].filter(Boolean);
+    app.innerHTML = `
+      <section class="hero-band">
+        <div class="wrap hero-in">
+          <span class="eyebrow">Phần mềm do mình tự viết</span>
+          <h1>${esc(SITE.title || "Dang Vien Dev")}</h1>
+          <p>${esc(SITE.subtitle || "")}</p>
+          <div class="hero-cta">
+            <a class="btn primary lg" href="#apps" id="go-apps">Xem ứng dụng</a>
+            ${FIXES.length ? `<a class="btn ghost lg" href="#/loi">Tra cứu lỗi</a>` : ""}
+          </div>
+          <div class="stats">
+            <div><b>${TOOLS.length}</b><span>ứng dụng</span></div>
+            <div><b>${platforms.length}</b><span>nền tảng</span></div>
+            ${FIXES.length ? `<div><b>${FIXES.length}</b><span>lỗi đã có cách xử lý</span></div>` : ""}
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="apps">
+        <div class="wrap">
+          <div class="section-head"><div><h2>Ứng dụng</h2><p>Bấm vào từng ứng dụng để xem tính năng, yêu cầu và tải về.</p></div></div>
+          <div class="toolbar">
+            ${CATEGORIES.length > 1 ? chips("cat", CATEGORIES, state.category, groupOf) : ""}
+            <div class="toolbar-right">
+              ${PLATFORMS.length > 1 ? `<div class="seg" role="group">${["Tất cả", ...PLATFORMS].map((p) =>
+                `<button data-p="${esc(p)}" aria-pressed="${state.platform === p}">${esc(p)}</button>`).join("")}</div>` : ""}
+              <label class="search">${ICON.search}
+                <input id="q" type="search" placeholder="Tìm tên, tính năng, công nghệ…" value="${esc(state.q)}" autocomplete="off"></label>
+            </div>
+          </div>
+          ${changesNotice()}
+          <div id="grid" class="grid"></div>
+        </div>
+      </section>
+      ${fixesTeaser()}`;
+
     const dismiss = app.querySelector("#notice-close");
     if (dismiss) dismiss.addEventListener("click", () => { session.set("dvt.noticeClosed", true); app.querySelector(".notice").remove(); });
-
-    header.querySelector("#q").addEventListener("input", (e) => { state.q = e.target.value.trim(); renderGrid(); });
-    header.querySelectorAll(".seg button").forEach((b) => b.addEventListener("click", () => {
+    app.querySelector("#go-apps").addEventListener("click", (e) => {
+      e.preventDefault(); document.getElementById("apps").scrollIntoView({ behavior: "smooth" });
+    });
+    app.querySelector("#q").addEventListener("input", (e) => { state.q = e.target.value.trim(); renderGrid(); });
+    app.querySelectorAll(".seg button").forEach((b) => b.addEventListener("click", () => {
       state.platform = b.dataset.p;
-      header.querySelectorAll(".seg button").forEach((x) => x.setAttribute("aria-pressed", x === b));
+      app.querySelectorAll(".seg button").forEach((x) => x.setAttribute("aria-pressed", x === b));
+      renderGrid();
+    }));
+    app.querySelectorAll(".chip[data-cat]").forEach((b) => b.addEventListener("click", () => {
+      state.category = b.dataset.cat;
+      app.querySelectorAll(".chip[data-cat]").forEach((x) => x.setAttribute("aria-pressed", x === b));
       renderGrid();
     }));
     renderGrid();
@@ -257,15 +283,12 @@
   }
 
   function renderDetail(t, rel) {
-    renderSidebar(t.id);
+    setNav("apps");
     const version = (rel && rel.tag) || (t.version ? "v" + t.version : "—");
     const updated = fmtDate((rel && rel.date) || t.updated) || "—";
-    header.innerHTML = `
-      <div class="h-title"><span class="h-icon">${ICON.tool}</span><span class="h-bar"></span><h1>${esc(t.name)}</h1></div>
-      <div class="h-actions"><a class="hbtn" href="#/">${ICON.back}Tất cả ứng dụng</a></div>`;
-
     app.innerHTML = `
-      <div style="${gvars(t.category)}">
+      <div class="wrap page" style="${gvars(t.category)}">
+        ${crumb([["#/", "Ứng dụng"], [null, t.category], [null, t.name]])}
         <div class="card hero">
           <div class="tile">${esc(initials(t.name))}</div>
           <div class="hero-text"><h2>${esc(t.name)}</h2><p>${esc(t.tagline)}</p></div>
@@ -301,10 +324,9 @@
   async function showDetail(id) {
     const t = TOOLS.find((x) => x.id === id);
     if (!t) {
-      renderSidebar("x");
-      header.innerHTML = `<div class="h-title"><span class="h-bar"></span><h1>Không tìm thấy</h1></div>
-        <div class="h-actions"><a class="hbtn" href="#/">${ICON.back}Tất cả ứng dụng</a></div>`;
-      app.innerHTML = `<div class="empty">Không tìm thấy ứng dụng “${esc(id)}”.</div>`;
+      setNav("apps");
+      app.innerHTML = `<div class="wrap page">${crumb([["#/", "Ứng dụng"], [null, "Không tìm thấy"]])}
+        <div class="empty">Không tìm thấy ứng dụng “${esc(id)}”. <a href="#/">Về danh sách</a></div></div>`;
       return;
     }
     document.title = `${t.name} · ${SITE.title || "Dang Vien Dev"}`;
@@ -352,24 +374,41 @@
   }
 
   function renderFixList() {
-    renderSidebar(null, "fixes");
-    const title = state.fixDevice === "Tất cả" ? "KHO LỖI" : state.fixDevice.toUpperCase();
+    setNav("fixes");
     const opts = [["Tất cả", "Tất cả"], ["field", VERIFIED.field], ["doc", VERIFIED.doc]];
-    header.innerHTML = `
-      <div class="h-title"><span class="h-icon">${ICON.bug}</span><span class="h-bar"></span><h1>${esc(title)}</h1></div>
-      <div class="h-actions">
-        <div class="seg" role="group">${opts.map(([v, l]) =>
-          `<button data-v="${esc(v)}" aria-pressed="${state.fixVerified === v}">${esc(l)}</button>`).join("")}</div>
-        <label class="search">${ICON.search}
-          <input id="fq" type="search" placeholder="Mã lỗi, tên máy, hiện tượng…" value="${esc(state.fixQ)}" autocomplete="off"></label>
-      </div>`;
-    app.innerHTML = `<p class="intro">Các lỗi máy tính, máy in, photocopy, máy scan đã có phương án xử lý.
-      <strong>Đã xử lý thực tế</strong>: đã sửa thành công trên máy khách. <strong>Quy trình chuẩn</strong>: theo tài liệu hãng / kinh nghiệm, áp dụng cho đúng dòng máy ghi trong mục.
-      <span id="fix-count" class="muted"></span></p><div id="grid" class="grid"></div>`;
-    header.querySelector("#fq").addEventListener("input", (e) => { state.fixQ = e.target.value.trim(); renderFixGrid(); });
-    header.querySelectorAll(".seg button").forEach((b) => b.addEventListener("click", () => {
+    app.innerHTML = `
+      <section class="hero-band small">
+        <div class="wrap hero-in">
+          ${crumb([["#/", "Trang chủ"], [null, "Kho lỗi"]])}
+          <h1>Kho lỗi</h1>
+          <p>Các lỗi máy tính, máy in, photocopy, máy scan đã có phương án xử lý.
+            <b>Đã xử lý thực tế</b>: đã sửa thành công trên máy khách. <b>Quy trình chuẩn</b>: theo tài liệu hãng / kinh nghiệm, áp dụng cho đúng dòng máy ghi trong mục.</p>
+          <label class="search big">${ICON.search}
+            <input id="fq" type="search" placeholder="Gõ mã lỗi, tên máy, hiện tượng… (vd 0x709, C447)" value="${esc(state.fixQ)}" autocomplete="off"></label>
+        </div>
+      </section>
+      <section class="section">
+        <div class="wrap">
+          <div class="toolbar">
+            ${DEVICES.length > 1 ? chips("dev", DEVICES, state.fixDevice, devOf) : ""}
+            <div class="toolbar-right">
+              <div class="seg" role="group">${opts.map(([v, l]) =>
+                `<button data-v="${esc(v)}" aria-pressed="${state.fixVerified === v}">${esc(l)}</button>`).join("")}</div>
+              <span id="fix-count" class="dim"></span>
+            </div>
+          </div>
+          <div id="grid" class="grid"></div>
+        </div>
+      </section>`;
+    app.querySelector("#fq").addEventListener("input", (e) => { state.fixQ = e.target.value.trim(); renderFixGrid(); });
+    app.querySelectorAll(".seg button").forEach((b) => b.addEventListener("click", () => {
       state.fixVerified = b.dataset.v;
-      header.querySelectorAll(".seg button").forEach((x) => x.setAttribute("aria-pressed", x === b));
+      app.querySelectorAll(".seg button").forEach((x) => x.setAttribute("aria-pressed", x === b));
+      renderFixGrid();
+    }));
+    app.querySelectorAll(".chip[data-dev]").forEach((b) => b.addEventListener("click", () => {
+      state.fixDevice = b.dataset.dev;
+      app.querySelectorAll(".chip[data-dev]").forEach((x) => x.setAttribute("aria-pressed", x === b));
       renderFixGrid();
     }));
     renderFixGrid();
@@ -377,17 +416,13 @@
 
   function renderFixDetail(id) {
     const f = FIXES.find((x) => x.id === id);
-    renderSidebar(null, "fixes");
+    setNav("fixes");
     if (!f) {
-      header.innerHTML = `<div class="h-title"><span class="h-bar"></span><h1>Không tìm thấy</h1></div>
-        <div class="h-actions"><a class="hbtn" href="#/loi">${ICON.back}Kho lỗi</a></div>`;
-      app.innerHTML = `<div class="empty">Không tìm thấy lỗi “${esc(id)}”.</div>`;
+      app.innerHTML = `<div class="wrap page">${crumb([["#/loi", "Kho lỗi"], [null, "Không tìm thấy"]])}
+        <div class="empty">Không tìm thấy lỗi “${esc(id)}”. <a href="#/loi">Về kho lỗi</a></div></div>`;
       return;
     }
     document.title = `${f.title} · ${SITE.title || "Dang Vien Dev"}`;
-    header.innerHTML = `
-      <div class="h-title"><span class="h-icon">${ICON.bug}</span><span class="h-bar"></span><h1>${esc(f.title)}</h1></div>
-      <div class="h-actions"><a class="hbtn" href="#/loi">${ICON.back}Kho lỗi</a></div>`;
     const steps = (f.steps || []).map((s, i) => `
       <li class="step"><span class="step-no">${i + 1}</span><div class="step-body">
         <div class="step-t">${fmt(s.t)}</div>
@@ -395,7 +430,16 @@
         ${s.cmd ? `<div class="cmd"><button class="copy" type="button" title="Copy">${ICON.copy}Copy</button><pre>${esc(s.cmd)}</pre></div>` : ""}
       </div></li>`).join("");
     app.innerHTML = `
-      <div style="${dvars(f.device)}">
+      <div class="wrap page" style="${dvars(f.device)}">
+        ${crumb([["#/loi", "Kho lỗi"], [null, f.device]])}
+        <div class="card hero fix-hero">
+          <div class="hero-text">
+            <div class="tool-cat">${esc(f.device)}</div>
+            <h2>${esc(f.title)}</h2>
+            <div class="tags">${(f.codes || []).map((c) => `<span class="tag code">${esc(c)}</span>`).join("")}</div>
+          </div>
+          ${vbadge(f.verified)}
+        </div>
         <div class="detail">
           <div>
             <div class="card sec"><h3>Hiện tượng</h3><p>${fmt(f.symptom)}</p></div>
