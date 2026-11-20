@@ -196,13 +196,15 @@
     const platforms = [...new Set(TOOLS.map((t) => t.platform))].filter(Boolean);
     app.innerHTML = `
       <section class="hero-band">
-        <div class="wrap hero-in">
+        <div class="wrap hero-in hero-grid">
+          <div>
           <span class="eyebrow">Phần mềm do mình tự viết</span>
           <h1>${esc(SITE.title || "Dang Vien Dev")}</h1>
           <p>${esc(SITE.subtitle || "")}</p>
           <div class="hero-cta">
             <a class="btn primary lg" href="#apps" id="go-apps">Xem ứng dụng</a>
             ${FIXES.length ? `<a class="btn ghost lg" href="#/loi">Tra cứu lỗi</a>` : ""}
+          </div>
           </div>
           <div class="stats">
             <div><b>${TOOLS.length}</b><span>ứng dụng</span></div>
