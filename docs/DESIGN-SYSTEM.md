@@ -28,7 +28,31 @@ Bản web hiện thực theo file này: `assets/style.css` của repo `dangvien-
 ```
 
 - Sidebar tối cố định bên trái, nội dung sáng bên phải. Chỉ có light theme ở vùng nội dung.
-- Mobile (web, dưới 760px): sidebar chuyển thành thanh ngang trên cùng, menu cuộn ngang, ẩn nhóm và phần tác giả.
+- Bố cục sidebar ở trên dành cho **phần mềm** (WPF/WinForms, web app nội bộ).
+
+### Biến thể website (trang giới thiệu công khai, vd `dangvien-dev.github.io`)
+
+```
+┌───────────────────────────────────────────────────────┐
+│ MENU NGANG #0F172A   Brand DEV        Mục · Mục · GitHub│
+├───────────────────────────────────────────────────────┤
+│ KHỐI MỞ ĐẦU  gradient #0F172A → #1E3A8A               │
+│  nhãn nhỏ · tiêu đề 44 Bold · mô tả · 2 nút · số liệu  │
+├───────────────────────────────────────────────────────┤
+│ SECTION #F8FAFC  ▌Tiêu đề 26 · chip lọc · lưới card    │
+├───────────────────────────────────────────────────────┤
+│ SECTION xen kẽ #F1F5F9                                 │
+├───────────────────────────────────────────────────────┤
+│ CHÂN TRANG #0F172A  brand · liên kết · tác giả         │
+└───────────────────────────────────────────────────────┘
+```
+
+- Menu ngang thay cho sidebar. Mục đang xem: nền `#1E293B`, gạch chân 2px `#60A5FA` (tương đương viền trái của menu active trong app).
+- Nội dung căn giữa, rộng tối đa 1180px.
+- Tiêu đề section có thanh dọc 4×24 `#2563EB` (lấy từ thanh accent của header trong app).
+- Bộ lọc dạng chip tròn có chấm màu nhóm. Chip đang chọn dùng nền nhạt + chữ đậm của nhóm.
+- Trang chi tiết có breadcrumb (`Ứng dụng / Nhóm / Tên`) thay cho nút quay lại trong header.
+- Mobile (dưới 760px): menu thu gọn, chip cuộn ngang, lưới 1 cột, chân trang 1 cột.
 
 ## 2. Bảng màu
 

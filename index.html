@@ -8,29 +8,40 @@
   <link rel="stylesheet" href="assets/style.css?v=__BUILD__">
 </head>
 <body>
-  <div class="shell">
-    <!-- Sidebar: mô phỏng MainWindow.xaml của TechMaster Pro -->
-    <aside class="sidebar">
+  <!-- Thanh menu ngang -->
+  <header class="topnav">
+    <div class="wrap topnav-in">
       <a href="#/" class="brand">
         <span class="brand-name" id="brand-name">Dang Vien</span>
         <span class="brand-tag" id="brand-tag">DEV</span>
-        <span class="brand-sub" id="brand-sub"></span>
       </a>
-      <nav class="side-nav" id="side-nav"></nav>
-      <div class="side-foot">
-        <hr>
-        <div class="side-author" id="side-author"></div>
-        <div class="side-contact" id="side-contact"></div>
-        <a class="side-link" id="side-github" href="#" target="_blank" rel="noopener">GitHub</a>
-      </div>
-    </aside>
+      <nav class="nav" id="nav">
+        <a href="#/" data-nav="apps">Ứng dụng</a>
+        <a href="#/loi" data-nav="fixes">Kho lỗi</a>
+        <a id="nav-github" href="#" target="_blank" rel="noopener">GitHub</a>
+      </nav>
+    </div>
+  </header>
 
-    <section class="content">
-      <!-- Header: mô phỏng HeaderViewTemplate -->
-      <header class="header" id="header"></header>
-      <main class="page" id="app"></main>
-    </section>
-  </div>
+  <main id="app"></main>
+
+  <footer class="footer">
+    <div class="wrap footer-in">
+      <div>
+        <div class="footer-brand"><span id="foot-brand">Dang Vien</span> <span class="brand-tag" id="foot-tag">DEV</span></div>
+        <div class="footer-sub" id="foot-sub"></div>
+      </div>
+      <div class="footer-links">
+        <a href="#/">Ứng dụng</a>
+        <a href="#/loi">Kho lỗi</a>
+        <a id="foot-github" href="#" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <div class="footer-meta">
+        <div id="foot-author"></div>
+        <div class="footer-contact" id="foot-contact"></div>
+      </div>
+    </div>
+  </footer>
 
   <div class="toasts" id="toasts" aria-live="polite"></div>
 
