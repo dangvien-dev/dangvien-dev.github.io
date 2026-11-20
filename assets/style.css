@@ -67,6 +67,7 @@ svg { flex: none; }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); }
 .grid > * { min-width: 0; }
 .tool-foot > * { min-width: 0; }
+.tool-foot > .badge { flex: none; }
 
 .tool {
   display: flex; flex-direction: column; gap: 10px; text-decoration: none; padding: 16px;
@@ -142,7 +143,7 @@ svg { flex: none; }
 .note { color: var(--text-2); font-size: 13px; }
 
 
-/* ---------- Kho lỗi (#/loi) ---------- */
+/* ---------- Sổ tay sửa lỗi (#/loi) ---------- */
 .muted { color: var(--text-2); }
 .fix .tool-cat { margin-bottom: 2px; }
 .fix .tool-name { font-size: 15px; }

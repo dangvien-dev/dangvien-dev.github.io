@@ -28,6 +28,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Kiểm tra dữ liệu (cú pháp JS, id trùng, field bắt buộc)
+        run: node .github/scripts/check-data.js
+
       - name: Gắn mã phiên bản
         run: |
           BUILD="${GITHUB_SHA::7}"
