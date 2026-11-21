@@ -126,7 +126,7 @@ window.TOOLS = [
     category: "Triển khai Windows",
     platform: "Windows",
     status: "internal",
-    version: "2.2.4.0",
+    version: "2.2.5.0",
     updated: "2026-11-21",
     stack: ["PowerShell 5.1", "WPF", ".NET Framework"],
     features: [
@@ -146,9 +146,9 @@ window.TOOLS = [
       "Giữ nguyên thư mục App và các tệp đi kèm; file EXE nâng cấp chỉ dành cho bộ app đã có sẵn",
       "Chưa ký số: Windows SmartScreen hoặc Smart App Control có thể chặn; xem hướng dẫn tải và chạy"
     ],
-    download: "downloads/TechMaster-Deploy-v2.2.4.0.zip",
+    download: "downloads/TechMaster-Deploy-v2.2.5.0.zip",
     downloadLabel: "Tải bản đầy đủ (.zip)",
-    downloadName: "TechMaster-Deploy-v2.2.4.0.zip",
+    downloadName: "TechMaster-Deploy-v2.2.5.0.zip",
     additionalDownloads: [
       { label: "EXE nâng cấp", url: "downloads/TechMaster-Update.exe", filename: "TechMaster-Update.exe" }
     ],
@@ -156,6 +156,14 @@ window.TOOLS = [
     source: "https://github.com/dangvien-dev/TechMaster-Deploy",
     docs: "downloads/techmaster-deploy.html",
     changelog: [
+      {
+        version: "2.2.5.0", date: "2026-11-21",
+        notes: [
+          "Thông báo có khung màu: thông tin, đang xử lý, chờ kiểm tra, thành công và lỗi; UltraViewer chỉ báo xanh khi đã xác minh",
+          "Thêm đơn vị / công ty và địa chỉ khách hàng, xuất sang biên bản và mẫu xác nhận bàn giao",
+          "Dọn Windows.old qua Disk Cleanup có kiểm tra lại; chọn menu Windows 10 / khôi phục Windows 11 theo tài khoản hiện tại"
+        ]
+      },
       {
         version: "2.2.4.0", date: "2026-11-21",
         notes: [
