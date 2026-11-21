@@ -126,7 +126,7 @@ window.TOOLS = [
     category: "Triển khai Windows",
     platform: "Windows",
     status: "internal",
-    version: "2.2.7.0",
+    version: "2.2.8.0",
     updated: "2026-11-21",
     stack: ["PowerShell 5.1", "WPF", ".NET Framework"],
     features: [
@@ -147,9 +147,9 @@ window.TOOLS = [
       "Giữ nguyên thư mục App và các tệp đi kèm; file EXE nâng cấp chỉ dành cho bộ app đã có sẵn",
       "Chưa ký số: Windows SmartScreen hoặc Smart App Control có thể chặn; xem hướng dẫn tải và chạy"
     ],
-    download: "downloads/TechMaster-Deploy-v2.2.7.0.zip",
+    download: "downloads/TechMaster-Deploy-v2.2.8.0.zip",
     downloadLabel: "Tải bản đầy đủ (.zip)",
-    downloadName: "TechMaster-Deploy-v2.2.7.0.zip",
+    downloadName: "TechMaster-Deploy-v2.2.8.0.zip",
     additionalDownloads: [
       { label: "EXE nâng cấp", url: "downloads/TechMaster-Update.exe", filename: "TechMaster-Update.exe" }
     ],
@@ -157,6 +157,14 @@ window.TOOLS = [
     source: "https://github.com/dangvien-dev/TechMaster-Deploy",
     docs: "downloads/techmaster-deploy.html",
     changelog: [
+      {
+        version: "2.2.8.0", date: "2026-11-21",
+        notes: [
+          "Menu truyền thống đọc build + UBR, vẫn ghi key nhưng từ mốc 26200.9974 cảnh báo Windows có thể bỏ qua do triển khai tính năng dần",
+          "Giữ cảnh báo khi key có sẵn và sau restart Explorer; phân biệt cấu hình đã lưu với giao diện menu chưa xác minh",
+          "Hướng dẫn Shift + chuột phải hoặc Arrange primary actions inline nếu có; toggle thực hiện thủ công trong Windows"
+        ]
+      },
       {
         version: "2.2.7.0", date: "2026-11-21",
         notes: [
