@@ -126,7 +126,7 @@ window.TOOLS = [
     category: "Triển khai Windows",
     platform: "Windows",
     status: "internal",
-    version: "2.2.5.0",
+    version: "2.2.6.0",
     updated: "2026-11-21",
     stack: ["PowerShell 5.1", "WPF", ".NET Framework"],
     features: [
@@ -146,9 +146,9 @@ window.TOOLS = [
       "Giữ nguyên thư mục App và các tệp đi kèm; file EXE nâng cấp chỉ dành cho bộ app đã có sẵn",
       "Chưa ký số: Windows SmartScreen hoặc Smart App Control có thể chặn; xem hướng dẫn tải và chạy"
     ],
-    download: "downloads/TechMaster-Deploy-v2.2.5.0.zip",
+    download: "downloads/TechMaster-Deploy-v2.2.6.0.zip",
     downloadLabel: "Tải bản đầy đủ (.zip)",
-    downloadName: "TechMaster-Deploy-v2.2.5.0.zip",
+    downloadName: "TechMaster-Deploy-v2.2.6.0.zip",
     additionalDownloads: [
       { label: "EXE nâng cấp", url: "downloads/TechMaster-Update.exe", filename: "TechMaster-Update.exe" }
     ],
@@ -156,6 +156,14 @@ window.TOOLS = [
     source: "https://github.com/dangvien-dev/TechMaster-Deploy",
     docs: "downloads/techmaster-deploy.html",
     changelog: [
+      {
+        version: "2.2.6.0", date: "2026-11-21",
+        notes: [
+          "Ghi nhớ lịch sử UltraViewer khi mở lại app / khởi động lại máy, đọc lại bản sao lưu cũ trên đúng máy; không tự reset lại",
+          "Hiện thời gian và trạng thái reset, xác minh hoặc khôi phục cùng đường dẫn sao lưu",
+          "Thêm nút Paint trên Microsoft Store trong Cài Windows để mở trang chính thức và bấm Get / Cài đặt"
+        ]
+      },
       {
         version: "2.2.5.0", date: "2026-11-21",
         notes: [
