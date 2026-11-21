@@ -126,7 +126,7 @@ window.TOOLS = [
     category: "Triển khai Windows",
     platform: "Windows",
     status: "internal",
-    version: "2.2.6.0",
+    version: "2.2.7.0",
     updated: "2026-11-21",
     stack: ["PowerShell 5.1", "WPF", ".NET Framework"],
     features: [
@@ -136,6 +136,7 @@ window.TOOLS = [
       "Đối chiếu key / Installation ID trước khi nạp CID; kiểm tra key cài đặt chung Windows theo lựa chọn",
       "Biên bản kiểm tra và hai mẫu xác nhận bàn giao cho khách lẻ / công ty; lưu thông tin đơn vị, chọn hoặc xoá riêng logo",
       "Tải / cài Office bằng ODT, dùng kho cài đặt lưu trên máy",
+      "Đặt A4 / máy in mặc định; chọn trình duyệt / PDF qua Cài đặt Windows và kiểm tra lại kết quả",
       "Cài ứng dụng từ WinGet hoặc tệp EXE / MSI do kỹ thuật viên thêm tại máy",
       "Fix Driver dùng chung mọi máy: quét lỗi, link Catalog, cài CAB / INF và kho USB / NAS tối đa 4 vòng; không đóng gói driver",
       "Cửa sổ cập nhật, sao lưu và khôi phục phiên bản trước; hướng dẫn nhanh ngay trong app"
@@ -146,9 +147,9 @@ window.TOOLS = [
       "Giữ nguyên thư mục App và các tệp đi kèm; file EXE nâng cấp chỉ dành cho bộ app đã có sẵn",
       "Chưa ký số: Windows SmartScreen hoặc Smart App Control có thể chặn; xem hướng dẫn tải và chạy"
     ],
-    download: "downloads/TechMaster-Deploy-v2.2.6.0.zip",
+    download: "downloads/TechMaster-Deploy-v2.2.7.0.zip",
     downloadLabel: "Tải bản đầy đủ (.zip)",
-    downloadName: "TechMaster-Deploy-v2.2.6.0.zip",
+    downloadName: "TechMaster-Deploy-v2.2.7.0.zip",
     additionalDownloads: [
       { label: "EXE nâng cấp", url: "downloads/TechMaster-Update.exe", filename: "TechMaster-Update.exe" }
     ],
@@ -156,6 +157,14 @@ window.TOOLS = [
     source: "https://github.com/dangvien-dev/TechMaster-Deploy",
     docs: "downloads/techmaster-deploy.html",
     changelog: [
+      {
+        version: "2.2.7.0", date: "2026-11-21",
+        notes: [
+          "Thêm Sau khi clone → Thiết lập mặc định: đặt A4 và máy in mặc định cho tài khoản đang chạy app, có log và đọc lại kết quả",
+          "Chọn trình duyệt / PDF đã đăng ký, xác nhận trong Cài đặt Windows rồi kiểm tra HTTP, HTTPS và .pdf",
+          "Báo riêng khi driver chưa nhận A4 hoặc một phần thao tác thất bại; không báo đã đổi ứng dụng chỉ vì mở Cài đặt"
+        ]
+      },
       {
         version: "2.2.6.0", date: "2026-11-21",
         notes: [
