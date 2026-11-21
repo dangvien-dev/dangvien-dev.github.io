@@ -126,8 +126,8 @@ window.TOOLS = [
     category: "Triển khai Windows",
     platform: "Windows",
     status: "internal",
-    version: "2.2.0.0",
-    updated: "2026-11-20",
+    version: "2.2.1.0",
+    updated: "2026-11-21",
     stack: ["PowerShell 5.1", "WPF", ".NET Framework"],
     features: [
       "Chuẩn bị Sysprep: lưu thiết lập Word, kiểm tra phím chụp và dọn shortcut trùng",
@@ -146,9 +146,9 @@ window.TOOLS = [
       "Giữ nguyên thư mục App và các tệp đi kèm; file EXE nâng cấp chỉ dành cho bộ app đã có sẵn",
       "Chưa ký số: Windows SmartScreen hoặc Smart App Control có thể chặn; xem hướng dẫn tải và chạy"
     ],
-    download: "downloads/TechMaster-Deploy-v2.2.0.0.zip",
+    download: "downloads/TechMaster-Deploy-v2.2.1.0.zip",
     downloadLabel: "Tải bản đầy đủ (.zip)",
-    downloadName: "TechMaster-Deploy-v2.2.0.0.zip",
+    downloadName: "TechMaster-Deploy-v2.2.1.0.zip",
     additionalDownloads: [
       { label: "EXE nâng cấp", url: "downloads/TechMaster-Update.exe", filename: "TechMaster-Update.exe" }
     ],
@@ -156,6 +156,13 @@ window.TOOLS = [
     source: "https://github.com/dangvien-dev/TechMaster-Deploy",
     docs: "downloads/techmaster-deploy.html",
     changelog: [
+      {
+        version: "2.2.1.0", date: "2026-11-21",
+        notes: [
+          "Bo góc các nút còn dùng giao diện mặc định ở UltraViewer, Bàn phím, Chuẩn bị Sysprep, Chẩn đoán và Gỡ Office",
+          "Bo thêm 14 ô nhập, mật khẩu, danh sách, bảng và thanh tiến trình; giữ nhập liệu, chọn, cuộn và ẩn / hiện đúng trạng thái"
+        ]
+      },
       {
         version: "2.2.0.0", date: "2026-11-20",
         notes: [
