@@ -126,7 +126,7 @@ window.TOOLS = [
     category: "Triển khai Windows",
     platform: "Windows",
     status: "internal",
-    version: "2.2.2.0",
+    version: "2.2.4.0",
     updated: "2026-11-21",
     stack: ["PowerShell 5.1", "WPF", ".NET Framework"],
     features: [
@@ -146,9 +146,9 @@ window.TOOLS = [
       "Giữ nguyên thư mục App và các tệp đi kèm; file EXE nâng cấp chỉ dành cho bộ app đã có sẵn",
       "Chưa ký số: Windows SmartScreen hoặc Smart App Control có thể chặn; xem hướng dẫn tải và chạy"
     ],
-    download: "downloads/TechMaster-Deploy-v2.2.2.0.zip",
+    download: "downloads/TechMaster-Deploy-v2.2.4.0.zip",
     downloadLabel: "Tải bản đầy đủ (.zip)",
-    downloadName: "TechMaster-Deploy-v2.2.2.0.zip",
+    downloadName: "TechMaster-Deploy-v2.2.4.0.zip",
     additionalDownloads: [
       { label: "EXE nâng cấp", url: "downloads/TechMaster-Update.exe", filename: "TechMaster-Update.exe" }
     ],
@@ -156,6 +156,20 @@ window.TOOLS = [
     source: "https://github.com/dangvien-dev/TechMaster-Deploy",
     docs: "downloads/techmaster-deploy.html",
     changelog: [
+      {
+        version: "2.2.4.0", date: "2026-11-21",
+        notes: [
+          "Đồng bộ bảng key Office, ứng dụng, lịch sử cập nhật và Fix Driver: tiêu đề xanh nhạt, dòng thoáng, màu chọn dễ đọc",
+          "Bảng Office có cột tiếng Việt, 5 ký tự cuối dùng chữ đều, tên giấy phép xuống dòng và tooltip"
+        ]
+      },
+      {
+        version: "2.2.3.0", date: "2026-11-21",
+        notes: [
+          "Chuyển Key dùng tạm Office sang mục Kích hoạt, cạnh nút kích hoạt Office, tương tự Windows",
+          "Cửa sổ key chỉ chọn / xoá key có xác nhận; giữ Gỡ Office ở mục Tải / cài Office"
+        ]
+      },
       {
         version: "2.2.2.0", date: "2026-11-21",
         notes: [
