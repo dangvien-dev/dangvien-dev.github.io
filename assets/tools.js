@@ -126,8 +126,8 @@ window.TOOLS = [
     category: "Triển khai Windows",
     platform: "Windows",
     status: "internal",
-    version: "2.2.8.0",
-    updated: "2026-11-21",
+    version: "2.2.9.0",
+    updated: "2026-11-23",
     stack: ["PowerShell 5.1", "WPF", ".NET Framework"],
     features: [
       "Chuẩn bị Sysprep: lưu thiết lập Word, kiểm tra phím chụp và dọn shortcut trùng",
@@ -147,9 +147,9 @@ window.TOOLS = [
       "Giữ nguyên thư mục App và các tệp đi kèm; file EXE nâng cấp chỉ dành cho bộ app đã có sẵn",
       "Chưa ký số: Windows SmartScreen hoặc Smart App Control có thể chặn; xem hướng dẫn tải và chạy"
     ],
-    download: "downloads/TechMaster-Deploy-v2.2.8.0.zip",
+    download: "downloads/TechMaster-Deploy-v2.2.9.0.zip",
     downloadLabel: "Tải bản đầy đủ (.zip)",
-    downloadName: "TechMaster-Deploy-v2.2.8.0.zip",
+    downloadName: "TechMaster-Deploy-v2.2.9.0.zip",
     additionalDownloads: [
       { label: "EXE nâng cấp", url: "downloads/TechMaster-Update.exe", filename: "TechMaster-Update.exe" }
     ],
@@ -157,6 +157,14 @@ window.TOOLS = [
     source: "https://github.com/dangvien-dev/TechMaster-Deploy",
     docs: "downloads/techmaster-deploy.html",
     changelog: [
+      {
+        version: "2.2.9.0", date: "2026-11-23",
+        notes: [
+          "Fix Driver hiện tổng thiết bị đã đọc, Code 0, lỗi và trạng thái chưa rõ; dữ liệu CIM rỗng không còn bị trình bày như quét thành công 0 lỗi",
+          "Hiện tất cả thiết bị và Mở Device Manager để đối chiếu; đây chưa phải tính năng tìm driver mới hơn cho thiết bị đang hoạt động",
+          "Trạng thái thiếu hiện ?, không tính là hoạt động / đã sửa hoặc cho disable; lỗi khởi tạo có log để kiểm tra"
+        ]
+      },
       {
         version: "2.2.8.0", date: "2026-11-21",
         notes: [
