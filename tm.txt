@@ -1,0 +1,106 @@
+# TechMaster Deploy - install / open from the web, no USB needed.
+# In PowerShell on the computer:   irm https://dangvien-dev.github.io/tm.txt | iex
+# Old Windows (SSL/TLS error):     [Net.ServicePointManager]::SecurityProtocol=3072; irm https://dangvien-dev.github.io/tm.txt | iex
+#
+# What it does: asks for administrator rights, reads downloads/latest.json on this site, downloads the
+# official ZIP into memory, checks its SHA256, locks C:\TechMaster-Deploy (only Administrators / SYSTEM
+# can change it, users read and run), writes the program files and opens TechMaster Deploy.
+# A copy already installed in a locked C:\TechMaster-Deploy is opened as it is; update it in the app.
+# This file is plain ASCII on purpose: Windows PowerShell 5.1 may read it without a charset.
+& {
+    $ErrorActionPreference = 'Stop'
+    $ProgressPreference = 'SilentlyContinue'
+    $site = 'https://dangvien-dev.github.io'
+    $target = Join-Path $env:SystemDrive 'TechMaster-Deploy'
+    try { [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12 } catch { }
+    $pause = [bool](Get-Variable -Name TechMasterElevated -ValueOnly -ErrorAction SilentlyContinue)
+
+    function Lock-TechMasterFolder([string]$Path) {
+        $steps = @(, @($Path, '/setowner', '*S-1-5-32-544', '/T', '/C', '/Q'))
+        $steps += , @($Path, '/inheritance:r', '/grant:r', '*S-1-5-18:(OI)(CI)F', '*S-1-5-32-544:(OI)(CI)F', '*S-1-5-32-545:(OI)(CI)RX', '/Q')
+        if (@(Get-ChildItem -LiteralPath $Path -Force).Count) { $steps += , @((Join-Path $Path '*'), '/reset', '/T', '/C', '/Q') }
+        foreach ($arguments in $steps) {
+            $output = & icacls.exe @arguments 2>&1
+            if ($LASTEXITCODE -ne 0) { throw ('Khong khoa duoc quyen thu muc ' + $Path + ': ' + (($output | Out-String).Trim())) }
+        }
+    }
+    function Test-TechMasterLocked([string]$Path) {
+        try {
+            $item = Get-Item -LiteralPath $Path -Force -ErrorAction Stop
+            if (-not $item.PSIsContainer -or ($item.Attributes -band [IO.FileAttributes]::ReparsePoint)) { return $false }
+            $acl = [IO.DirectoryInfo]::new($Path).GetAccessControl()
+            if (-not $acl.AreAccessRulesProtected -or $acl.GetOwner([Security.Principal.SecurityIdentifier]).Value -ne 'S-1-5-32-544') { return $false }
+            $write = 0x2 -bor 0x4 -bor 0x10 -bor 0x100 -bor 0x10000 -bor 0x40 -bor 0x40000 -bor 0x80000 -bor 0x10000000 -bor 0x40000000
+            foreach ($rule in $acl.GetAccessRules($true, $true, [Security.Principal.SecurityIdentifier])) {
+                if ($rule.AccessControlType -eq [Security.AccessControl.AccessControlType]::Allow -and $rule.IdentityReference.Value -notin 'S-1-5-18', 'S-1-5-32-544' -and ([int]$rule.FileSystemRights -band $write)) { return $false }
+            }
+            return $true
+        } catch { return $false }
+    }
+
+    try {
+        $principal = [Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()
+        if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+            Write-Host 'TechMaster Deploy can quyen quan tri: chon Yes o hop thoai Windows.' -ForegroundColor Cyan
+            $command = '$TechMasterElevated=$true; [Net.ServicePointManager]::SecurityProtocol=[Net.ServicePointManager]::SecurityProtocol -bor 3072; irm ' + $site + '/tm.txt | iex'
+            $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($command))
+            try { Start-Process powershell.exe -Verb RunAs -ArgumentList ('-NoLogo -NoProfile -ExecutionPolicy Bypass -EncodedCommand ' + $encoded) | Out-Null }
+            catch { throw 'Chua co quyen quan tri. Chay lai lenh va chon Yes.' }
+            return
+        }
+        $exe = Join-Path $target 'TechMaster Deploy.exe'
+        if ((Test-Path -LiteralPath $exe -PathType Leaf) -and (Test-Path -LiteralPath (Join-Path $target 'App\TechMaster-Deploy.ps1') -PathType Leaf) -and (Test-TechMasterLocked $target)) {
+            Write-Host ('Da co TechMaster Deploy tai ' + $target + ': dang mo. Cap nhat bang nut Cap nhat trong app.') -ForegroundColor Green
+            Start-Process -FilePath $exe -WorkingDirectory $target | Out-Null
+            if ($pause) { Start-Sleep -Seconds 3 }
+            return
+        }
+        Write-Host 'Dang doc phien ban moi nhat...'
+        $latest = Invoke-RestMethod -Uri ($site + '/downloads/latest.json') -UseBasicParsing
+        $version = $null
+        if (-not [version]::TryParse([string]$latest.version, [ref]$version) -or [string]$latest.zip -cne ('TechMaster-Deploy-v' + [string]$latest.version + '.zip') -or [string]$latest.sha256 -notmatch '^[0-9a-f]{64}$') { throw 'downloads/latest.json khong hop le.' }
+        Write-Host ('Dang tai TechMaster Deploy ' + $version + '...')
+        $client = New-Object Net.WebClient
+        try { [byte[]]$bytes = $client.DownloadData($site + '/downloads/' + $latest.zip) } finally { $client.Dispose() }
+        $sha = [Security.Cryptography.SHA256]::Create()
+        try { $hash = ([BitConverter]::ToString($sha.ComputeHash($bytes))).Replace('-', '').ToLowerInvariant() } finally { $sha.Dispose() }
+        if ($hash -cne [string]$latest.sha256) { throw 'SHA256 cua goi tai ve khong khop voi trang tai; da dung, khong cai gi.' }
+        Write-Host ('Da kiem tra SHA256 ' + $hash.Substring(0, 12) + '...; dang cai vao ' + $target + '...')
+        if (Test-Path -LiteralPath $target) {
+            $item = Get-Item -LiteralPath $target -Force
+            if (-not $item.PSIsContainer -or ($item.Attributes -band [IO.FileAttributes]::ReparsePoint)) { throw ('Khong dung duoc ' + $target + ': khong phai thu muc thuong.') }
+        } else { New-Item -ItemType Directory -Path $target -Force | Out-Null }
+        Lock-TechMasterFolder $target
+        Add-Type -AssemblyName System.IO.Compression
+        $root = [IO.Path]::GetFullPath($target).TrimEnd('\') + '\'
+        $zip = New-Object IO.Compression.ZipArchive((New-Object IO.MemoryStream(, $bytes)), [IO.Compression.ZipArchiveMode]::Read)
+        $written = 0
+        try {
+            foreach ($entry in $zip.Entries) {
+                $name = $entry.FullName.Replace('\', '/')
+                if (-not $name.StartsWith('TechMaster-Deploy/')) { throw ('Goi co tep ngoai thu muc TechMaster-Deploy: ' + $name) }
+                $relative = $name.Substring('TechMaster-Deploy/'.Length)
+                if (-not $relative -or $relative.EndsWith('/')) { continue }
+                foreach ($part in $relative.Split('/')) { if (-not $part -or $part -in '.', '..' -or $part.Contains(':')) { throw ('Duong dan khong hop le trong goi: ' + $name) } }
+                $destination = [IO.Path]::GetFullPath((Join-Path $target $relative.Replace('/', '\')))
+                if (-not $destination.StartsWith($root, [StringComparison]::OrdinalIgnoreCase)) { throw ('Duong dan khong hop le trong goi: ' + $name) }
+                New-Item -ItemType Directory -Path (Split-Path -Parent $destination) -Force | Out-Null
+                $temp = $destination + '.tm-new'
+                $reader = $entry.Open(); $writer = [IO.File]::Create($temp)
+                try { $reader.CopyTo($writer) } finally { $writer.Dispose(); $reader.Dispose() }
+                try { [IO.File]::Copy($temp, $destination, $true) }
+                catch { throw ('Khong ghi duoc ' + $relative + '. Dong TechMaster Deploy dang mo roi chay lai lenh.') }
+                finally { [IO.File]::Delete($temp) }
+                $written++
+            }
+        } finally { $zip.Dispose() }
+        Lock-TechMasterFolder $target
+        if (-not (Test-Path -LiteralPath $exe -PathType Leaf)) { throw 'Goi khong co TechMaster Deploy.exe.' }
+        Write-Host ('Da cai TechMaster Deploy ' + $version + ' (' + $written + ' tep) vao ' + $target + '. Dang mo...') -ForegroundColor Green
+        Start-Process -FilePath $exe -WorkingDirectory $target | Out-Null
+        if ($pause) { Start-Sleep -Seconds 3 }
+    } catch {
+        Write-Host ('Loi: ' + $_.Exception.GetBaseException().Message) -ForegroundColor Red
+        if ($pause) { [void](Read-Host 'Nhan Enter de dong') }
+    }
+}

@@ -1,0 +1,32 @@
+# Kiểm tra lệnh cài từ web (tm.txt) và dữ liệu trước khi merge; không deploy.
+name: Check web install
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  data:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Kiểm tra dữ liệu và latest.json
+        run: node .github/scripts/check-data.js
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Chạy tm.txt thật với bản sao cục bộ của trang (Windows PowerShell 5.1)
+        shell: powershell
+        run: |
+          try { & .github/scripts/test-web-install.ps1 }
+          catch {
+            $detail = ($_.Exception.ToString() + "`n" + $_.ScriptStackTrace)
+            $detail | Out-File $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+            Write-Output ("::error title=Web install::" + $detail.Replace('%','%25').Replace("`r",'%0D').Replace("`n",'%0A'))
+            exit 1
+          }
