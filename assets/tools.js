@@ -126,8 +126,8 @@ window.TOOLS = [
     category: "Triển khai Windows",
     platform: "Windows",
     status: "internal",
-    version: "2.2.19.0",
-    updated: "2026-11-26",
+    version: "2.2.26.0",
+    updated: "2026-11-27",
     stack: ["PowerShell 5.1", "WPF", ".NET Framework"],
     features: [
       "Chuẩn bị Sysprep: lưu thiết lập Word, kiểm tra phím chụp và dọn shortcut trùng",
@@ -136,7 +136,10 @@ window.TOOLS = [
       "Đối chiếu key / Installation ID trước khi nạp CID; kiểm tra key cài đặt chung Windows theo lựa chọn",
       "Biên bản kiểm tra và hai mẫu xác nhận bàn giao cho khách lẻ / công ty; lưu thông tin đơn vị, chọn hoặc xoá riêng logo",
       "Tải / cài Office bằng ODT, dùng kho cài đặt lưu trên máy",
-      "Đặt A4 / máy in mặc định; chọn trình duyệt / PDF qua Cài đặt Windows và kiểm tra lại kết quả",
+      "Menu theo chức năng (Cài đặt / Cấu hình / Triển khai / Hỗ trợ) và trang Tổng quan: cấu hình máy, IP, bản quyền Windows / Office",
+      "Đặt A4 / máy in mặc định; dọn máy in không còn kết nối như Remove device (giữ driver); chọn trình duyệt / PDF qua Cài đặt Windows",
+      "Chia sẻ trong LAN: tài khoản scan / share / print chỉ dùng qua mạng, chia sẻ thư mục có phân quyền và tường lửa LAN, lưu mật khẩu một lần trên máy người dùng",
+      "Chạy TechMaster trên máy khác không cần USB: chia sẻ chỉ đọc qua LAN hoặc lệnh irm https://dangvien-dev.github.io/tm.txt | iex; kiểm tra từng tệp trước khi mở",
       "Cài ứng dụng từ WinGet hoặc tệp EXE / MSI do kỹ thuật viên thêm tại máy",
       "Fix Driver dùng chung mọi máy: quét lỗi, link Catalog, cài CAB / INF và kho USB / NAS tối đa 4 vòng; máy in / MFP mở trang driver của hãng; không đóng gói driver",
       "Chẩn đoán ứng dụng bị báo virus (Defender / Kaspersky, Floxif, ngoại lệ rộng) và Sửa lỗi có chọn lọc: cập nhật / quét Defender, gỡ cho phép, cách ly không xoá tệp",
@@ -148,9 +151,9 @@ window.TOOLS = [
       "Giữ nguyên thư mục App và các tệp đi kèm; file EXE nâng cấp chỉ dành cho bộ app đã có sẵn",
       "Chưa ký số: Windows SmartScreen hoặc Smart App Control có thể chặn; xem hướng dẫn tải và chạy"
     ],
-    download: "downloads/TechMaster-Deploy-v2.2.19.0.zip",
+    download: "downloads/TechMaster-Deploy-v2.2.26.0.zip",
     downloadLabel: "Tải bản đầy đủ (.zip)",
-    downloadName: "TechMaster-Deploy-v2.2.19.0.zip",
+    downloadName: "TechMaster-Deploy-v2.2.26.0.zip",
     additionalDownloads: [
       { label: "EXE nâng cấp", url: "downloads/TechMaster-Update.exe", filename: "TechMaster-Update.exe" }
     ],
@@ -158,6 +161,51 @@ window.TOOLS = [
     source: "https://github.com/dangvien-dev/TechMaster-Deploy",
     docs: "downloads/techmaster-deploy.html",
     changelog: [
+      {
+        version: "2.2.26.0", date: "2026-11-27",
+        notes: [
+          "Chia sẻ TechMaster qua LAN dùng danh sách update-package.json của bản cài (SHA256 từng tệp, kể cả exe), không còn báo thiếu update-source.json"
+        ]
+      },
+      {
+        version: "2.2.25.0", date: "2026-11-27",
+        notes: [
+          "Máy in mặc định / A4, Dọn máy in không kết nối và Trình duyệt / PDF mặc định mở cửa sổ riêng, chỉ có phần của nút đã bấm"
+        ]
+      },
+      {
+        version: "2.2.24.0", date: "2026-11-27",
+        notes: [
+          "Menu chia nhóm theo chức năng; gộp Office + Cài ứng dụng thành Phần mềm, Kích hoạt + Biên bản thành Bản quyền & biên bản, Máy gốc + Sau khi clone thành Clone hàng loạt",
+          "Trang Tổng quan khi mở app: tên máy, model / serial, Windows + build, CPU, RAM, ổ hệ thống, IP, bản quyền; sao chép thông tin và lối vào nhanh",
+          "Chạy trên máy khác không cần USB: chia sẻ thư mục app chỉ đọc (\\\\TÊN-MÁY\\TechMaster$) rồi mở Chay-Tu-Mang.bat, hoặc lệnh web; app cài vào C:\\TechMaster-Deploy chỉ Administrators sửa được"
+        ]
+      },
+      {
+        version: "2.2.23.0", date: "2026-11-27",
+        notes: [
+          "Chia sẻ thư mục: chọn thư mục, quyền Chỉ đọc / Đọc & ghi cho scan / share / print, tường lửa chỉ trong LAN, không mở cho Everyone / Guest",
+          "Kết nối thư mục chia sẻ trên máy người dùng: thử đăng nhập rồi lưu mật khẩu vào Credential Manager, tạo lối tắt, tuỳ chọn gán ổ"
+        ]
+      },
+      {
+        version: "2.2.22.0", date: "2026-11-27",
+        notes: [
+          "Tài khoản chia sẻ LAN scan / share / print, mật khẩu do kỹ thuật viên nhập; chỉ đăng nhập qua mạng, ẩn khỏi màn hình đăng nhập"
+        ]
+      },
+      {
+        version: "2.2.21.0", date: "2026-11-27",
+        notes: [
+          "Dọn máy in gỡ cả thiết bị như Remove device trong Devices and Printers (giữ driver), có tiến trình từng máy và không báo thành công khi Windows chưa xoá xong"
+        ]
+      },
+      {
+        version: "2.2.20.0", date: "2026-11-27",
+        notes: [
+          "Dọn nhanh máy in không còn kết nối (Offline, hàng đợi “(Copy n)” cũ)"
+        ]
+      },
       {
         version: "2.2.19.0", date: "2026-11-26",
         notes: [
