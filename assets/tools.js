@@ -126,8 +126,8 @@ window.TOOLS = [
     category: "Triển khai Windows",
     platform: "Windows",
     status: "internal",
-    version: "2.2.9.0",
-    updated: "2026-11-23",
+    version: "2.2.19.0",
+    updated: "2026-11-26",
     stack: ["PowerShell 5.1", "WPF", ".NET Framework"],
     features: [
       "Chuẩn bị Sysprep: lưu thiết lập Word, kiểm tra phím chụp và dọn shortcut trùng",
@@ -138,7 +138,8 @@ window.TOOLS = [
       "Tải / cài Office bằng ODT, dùng kho cài đặt lưu trên máy",
       "Đặt A4 / máy in mặc định; chọn trình duyệt / PDF qua Cài đặt Windows và kiểm tra lại kết quả",
       "Cài ứng dụng từ WinGet hoặc tệp EXE / MSI do kỹ thuật viên thêm tại máy",
-      "Fix Driver dùng chung mọi máy: quét lỗi, link Catalog, cài CAB / INF và kho USB / NAS tối đa 4 vòng; không đóng gói driver",
+      "Fix Driver dùng chung mọi máy: quét lỗi, link Catalog, cài CAB / INF và kho USB / NAS tối đa 4 vòng; máy in / MFP mở trang driver của hãng; không đóng gói driver",
+      "Chẩn đoán ứng dụng bị báo virus (Defender / Kaspersky, Floxif, ngoại lệ rộng) và Sửa lỗi có chọn lọc: cập nhật / quét Defender, gỡ cho phép, cách ly không xoá tệp",
       "Cửa sổ cập nhật, sao lưu và khôi phục phiên bản trước; hướng dẫn nhanh ngay trong app"
     ],
     requirements: [
@@ -147,9 +148,9 @@ window.TOOLS = [
       "Giữ nguyên thư mục App và các tệp đi kèm; file EXE nâng cấp chỉ dành cho bộ app đã có sẵn",
       "Chưa ký số: Windows SmartScreen hoặc Smart App Control có thể chặn; xem hướng dẫn tải và chạy"
     ],
-    download: "downloads/TechMaster-Deploy-v2.2.9.0.zip",
+    download: "downloads/TechMaster-Deploy-v2.2.19.0.zip",
     downloadLabel: "Tải bản đầy đủ (.zip)",
-    downloadName: "TechMaster-Deploy-v2.2.9.0.zip",
+    downloadName: "TechMaster-Deploy-v2.2.19.0.zip",
     additionalDownloads: [
       { label: "EXE nâng cấp", url: "downloads/TechMaster-Update.exe", filename: "TechMaster-Update.exe" }
     ],
@@ -157,6 +158,73 @@ window.TOOLS = [
     source: "https://github.com/dangvien-dev/TechMaster-Deploy",
     docs: "downloads/techmaster-deploy.html",
     changelog: [
+      {
+        version: "2.2.19.0", date: "2026-11-26",
+        notes: [
+          "Fix Driver: máy in / MFP của Canon, HP, Epson, Brother, Kyocera, Ricoh, Xerox, Lexmark, OKI có nút Mở trang driver của hãng và link tìm theo tên model, thay cho link Catalog theo VID/PID thường không ra kết quả",
+          "Nhận diện máy in theo class Printer, ID USBPRINT / WSDPRINT / USB class 07 hoặc tên model; thiết bị khác và hãng ngoài bảng vẫn dùng Catalog",
+          "Chỉ mở link HTTPS do app tạo; báo cáo HTML dùng cùng bộ link"
+        ]
+      },
+      {
+        version: "2.2.18.0", date: "2026-11-26",
+        notes: [
+          "Sửa lỗi báo virus không còn chọn sẵn quét toàn bộ ổ D: / USB; ghi dung lượng ổ và cảnh báo HDD lớn có thể quét hàng giờ",
+          "Nhận biết mọi lượt quét Defender đang chạy, kể cả quét riêng một ổ, qua nhật ký Defender; hỏi trước khi chạy chồng"
+        ]
+      },
+      {
+        version: "2.2.17.0", date: "2026-11-26",
+        notes: [
+          "Chẩn đoán báo virus mặc định chế độ nhẹ (chỉ chữ ký .exe), tích Quét sâu để kiểm tra cả .dll; luồng chạy ưu tiên thấp",
+          "Hỏi trước khi chạy khi Defender đang quét; không chạm ổ mạng hoặc ổ đã rút"
+        ]
+      },
+      {
+        version: "2.2.16.0", date: "2026-11-26",
+        notes: [
+          "Khi Defender đang có lượt quét khác, mục quét chờ tối đa 15 phút rồi tự chạy, thay cho lỗi A scan is already in progress"
+        ]
+      },
+      {
+        version: "2.2.15.0", date: "2026-11-26",
+        notes: [
+          "Mã 5 trong lịch sử phát hiện ghi Đã cho phép lúc phát hiện; cờ ĐANG ĐƯỢC CHO PHÉP chỉ hiện khi mã còn trong danh sách cho phép của Defender"
+        ]
+      },
+      {
+        version: "2.2.14.0", date: "2026-11-26",
+        notes: [
+          "Thêm Sửa lỗi… sau chẩn đoán báo virus: cập nhật định nghĩa, gỡ mã đang Cho phép / ngoại lệ phủ cả ổ, tắt AppInit_DLLs, cách ly tệp còn sót, quét nhanh / theo ổ / toàn bộ / offline",
+          "Không xoá tệp: tệp bị cách ly chuyển vào _CachLy_Virus kèm danh sách đường dẫn gốc và SHA256; mỗi mục kiểm tra lại và ghi nhật ký",
+          "Kết luận tách ĐANG có dấu hiệu virus lây file với ĐÃ TỪNG nhiễm trong 30 ngày"
+        ]
+      },
+      {
+        version: "2.2.13.0", date: "2026-11-26",
+        notes: [
+          "Chẩn đoán báo virus hiện thanh tiến trình, bước 1/6 → 6/6, số tệp đã kiểm tra chữ ký và thời gian chạy; có nút Xem kết quả gần nhất"
+        ]
+      },
+      {
+        version: "2.2.12.0", date: "2026-11-26",
+        notes: [
+          "Nhận dạng Floxif (symsrv.dll / ffff.dll, AppInit_DLLs), trạng thái xử lý theo mã Microsoft, đánh dấu ĐÃ CHẠY / CÒN TRÊN Ổ và tóm tắt theo ổ"
+        ]
+      },
+      {
+        version: "2.2.11.0", date: "2026-11-26",
+        notes: [
+          "Xuất kết quả chẩn đoán ra .txt; chỉ quét chữ ký .exe / .dll; ngoại lệ Defender trùng cả ổ hoặc thư mục hệ thống được đưa lên KIỂM TRA GẤP"
+        ]
+      },
+      {
+        version: "2.2.10.0", date: "2026-11-26",
+        notes: [
+          "Đổi tab Fix Driver thành Chẩn đoán & sửa lỗi; thêm Chẩn đoán báo virus (chỉ đọc) cho Word, Zalo hoặc ứng dụng bị Defender / Kaspersky chặn",
+          "Phân biệt virus lây file, công cụ kích hoạt bị nhận là HackTool và phát hiện heuristic có thể báo nhầm"
+        ]
+      },
       {
         version: "2.2.9.0", date: "2026-11-23",
         notes: [
