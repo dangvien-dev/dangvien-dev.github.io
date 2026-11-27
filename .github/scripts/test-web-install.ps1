@@ -51,8 +51,12 @@ $out = Invoke-WebInstall $repo
 Assert ($out -match 'Da co TechMaster Deploy' -and $global:TechMasterOpened -and (Get-Item (Join-Path $target 'App\TechMaster-Deploy.ps1')).LastWriteTimeUtc -eq $stamp) 'A locked install is opened without downloading again'
 
 # 4. An install that users could change is not trusted: it is reinstalled and locked again.
-& icacls.exe $target '/grant' '*S-1-5-32-545:(OI)(CI)M' | Out-Null
+& icacls.exe $target '/grant' '*S-1-5-32-545:(OI)(CI)M' '*S-1-1-0:(OI)(CI)M' | Out-Null
+& icacls.exe (Join-Path $target 'App\TechMaster-Deploy.ps1') '/grant' '*S-1-1-0:M' | Out-Null
 [IO.File]::WriteAllText((Join-Path $target 'App\TechMaster-Deploy.ps1'), 'planted')
 $out = Invoke-WebInstall $repo
 Assert ($out -match 'Da cai TechMaster Deploy' -and (Test-Locked $target) -and [IO.File]::ReadAllText((Join-Path $target 'App\TechMaster-Deploy.ps1')) -cne 'planted') 'An unlocked install is replaced by the checked package and locked again'
+$sddl = [IO.DirectoryInfo]::new($target).GetAccessControl().GetSecurityDescriptorSddlForm('Access')
+$fileRules = @([IO.File]::GetAccessControl((Join-Path $target 'App\TechMaster-Deploy.ps1')).GetAccessRules($true, $false, [Security.Principal.SecurityIdentifier]))
+Assert ($sddl -notmatch ';WD\)' -and $fileRules.Count -eq 0) "Explicit entries of other accounts (Everyone) are removed from the folder and its files ($sddl)"
 Write-Host "PASS: $checks web install assertions; SHA256 refusal, install, folder lock, reopen and reinstall of an unlocked copy."
