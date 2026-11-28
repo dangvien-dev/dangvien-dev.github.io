@@ -269,6 +269,24 @@
     return `<a class="btn primary" href="${esc(url)}"${download} target="_blank" rel="noopener">${ICON.down}${label}</a>`;
   }
 
+  // tìm file trong release theo regex tên (pattern rỗng/không hợp lệ → null)
+  function findAsset(assets, pattern) {
+    if (!pattern) return null;
+    try { const re = new RegExp(pattern, "i"); return assets.find((a) => re.test(a.name)) || null; }
+    catch (_) { return null; }
+  }
+
+  // release thô (cache chung cho các tool cùng repo) → url nút chính + các nút phụ của tool này
+  function releaseFor(t, raw) {
+    if (!raw) return null;
+    const main = findAsset(raw.assets, t.releaseAsset) || raw.assets[0];
+    const extras = (t.releaseExtraAssets || []).map((d) => {
+      const a = findAsset(raw.assets, d.match);
+      return a && a !== main ? { label: d.label, url: a.browser_download_url } : null;
+    }).filter(Boolean);
+    return { tag: raw.tag, date: raw.date, url: main ? main.browser_download_url : raw.html, extras };
+  }
+
   async function fetchRelease(repo) {
     if (!repo) return null;
     if (releaseCache[repo] !== undefined) return releaseCache[repo];
@@ -277,9 +295,8 @@
         { headers: { Accept: "application/vnd.github+json" } });
       if (!r.ok) throw new Error(r.status);
       const j = await r.json();
-      const asset = (j.assets || [])[0];
       releaseCache[repo] = { tag: j.tag_name, date: (j.published_at || "").slice(0, 10),
-        url: asset ? asset.browser_download_url : j.html_url };
+        assets: j.assets || [], html: j.html_url };
     } catch (_) { releaseCache[repo] = null; }
     return releaseCache[repo];
   }
@@ -296,6 +313,7 @@
           <div class="hero-text"><h2>${esc(t.name)}</h2><p>${esc(t.tagline)}</p></div>
           <div class="actions">
             ${downloadBtn(t, rel)}
+            ${((rel && rel.extras) || []).map((d) => `<a class="btn outline" href="${esc(d.url)}" target="_blank" rel="noopener">${ICON.down}${esc(d.label)}</a>`).join("")}
             ${(t.additionalDownloads || []).map((d) => `<a class="btn outline" href="${esc(d.url)}"${d.filename ? ` download="${esc(d.filename)}"` : ""} target="_blank" rel="noopener">${esc(d.label)}</a>`).join("")}
             ${t.docs ? `<a class="btn outline" href="${esc(t.docs)}" target="_blank" rel="noopener">Hướng dẫn</a>` : ""}
             ${t.source ? `<a class="btn outline" href="${esc(t.source)}" target="_blank" rel="noopener">Source</a>` : ""}
@@ -334,7 +352,7 @@
     document.title = `${t.name} · ${SITE.title || "Dang Vien Dev"}`;
     renderDetail(t, null);
     if (t.githubRepo) {
-      const rel = await fetchRelease(t.githubRepo);
+      const rel = releaseFor(t, await fetchRelease(t.githubRepo));
       if (rel && location.hash === `#/tool/${encodeURIComponent(id)}`) renderDetail(t, rel);
     }
   }
