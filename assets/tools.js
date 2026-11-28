@@ -17,6 +17,8 @@
  *  download     : link tải trực tiếp (để "" → nút "Chưa có bản tải")
  *  githubRepo   : "owner/repo" PUBLIC có Releases → trang tự lấy bản mới nhất qua GitHub API
  *                 (repo private thì API trả 404, để "" và dùng field download)
+ *  releaseAsset : (tuỳ chọn) regex tên file trong release dùng cho nút tải chính; không khớp thì lấy file đầu tiên
+ *  releaseExtraAssets : (tuỳ chọn) [{ match: regex tên file, label }] → thêm nút tải phụ khi release có file khớp
  *  source       : link source code (nếu public)
  *  docs         : link hướng dẫn
  *  changelog    : [{ version, date, notes: [] }]
@@ -45,12 +47,16 @@ window.TOOLS = [
     ],
     requirements: [
       "Windows 10 / 11 (64-bit)",
-      "Không cần cài đặt: giải nén file zip rồi chạy OpenKey64.exe",
+      "Bản cài đặt (TechVKey…-Setup.exe): chạy file, bấm Next tới hết — không cần quyền admin, có biểu tượng Start Menu và gỡ cài đặt trong Settings → Apps",
+      "Bản portable (TechVKey…-Windows.zip): không cần cài, giải nén rồi chạy TechVKey64.exe",
       "Chưa ký số: lần đầu Windows SmartScreen có thể cảnh báo — chọn Thông tin thêm → Vẫn chạy. Nếu file bị chặn, bấm chuột phải → Properties → Unblock",
+      "Đang dùng bản cũ (tên OpenKey64.exe): cứ bấm cập nhật trong app như bình thường, bản mới tự đổi tên thành TechVKey64.exe. Lối tắt tự ghim trên taskbar / Start cần ghim lại",
       "Đang dùng 2.0.8 trở xuống và cập nhật bằng nút trong app: chép OpenKeyUpdate.exe trong file zip mới vào thư mục cài một lần để các lần cập nhật sau tự mở lại"
     ],
     download: "https://github.com/dangvien-dev/TechVKey/releases/latest", // dự phòng khi GitHub API bị giới hạn (403): nút vẫn dẫn tới trang tải
     githubRepo: "dangvien-dev/TechVKey",
+    releaseAsset: "-Setup\\.exe$", // nút chính: bản cài đặt
+    releaseExtraAssets: [{ match: "^TechVKey.*-Windows\\.zip$", label: "Bản portable (.zip)" }],
     source: "https://github.com/dangvien-dev/TechVKey",
     docs: "",
     changelog: [
